@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { INDIA_MAP_PATHS } from '../constants';
 import { StateData } from '../types';
@@ -23,6 +24,19 @@ export const IndiaMap: React.FC<IndiaMapProps> = ({ onStateClick, data }) => {
 
   return (
     <div className="relative w-full max-w-2xl mx-auto bg-white p-4 rounded-xl shadow-lg border border-slate-100">
+      
+      {/* --- CUSTOM ANIMATION SLOT --- */}
+      {/* Step 1: Design in Canva. Step 2: Export as GIF. Step 3: Replace the src below with your GIF URL */}
+      <div className="w-full h-12 mb-2 flex items-center justify-center overflow-hidden rounded-lg bg-slate-50 border border-dashed border-slate-200">
+        {/* Replace the src below with your Canva GIF URL */}
+        <img 
+            src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGV6YWU5eXJ5b3J6b3J6b3J6b3J6b3J6b3J6b3J6b3J6/3o7TKSjRrfIPjeiVyM/giphy.gif" 
+            alt="Custom Canva Animation" 
+            className="h-full w-full object-cover opacity-50 hover:opacity-100 transition-opacity" 
+        />
+      </div>
+      {/* ----------------------------- */}
+
       <h2 className="text-lg font-bold text-slate-800 mb-4 text-center">Nationwide Disease Heatmap</h2>
       <div className="w-full aspect-[4/4.5] relative">
         {/* ViewBox adjusted for the new realistic India paths (approx 140-450 width, 40-400 height) */}
