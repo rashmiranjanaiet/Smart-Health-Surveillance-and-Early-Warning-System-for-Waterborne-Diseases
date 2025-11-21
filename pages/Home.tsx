@@ -1,8 +1,9 @@
+
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { IndiaMap } from '../components/IndiaMap';
 import { useNavigate } from 'react-router-dom';
-import { Search, TrendingUp, AlertTriangle, Users } from 'lucide-react';
+import { Search, TrendingUp, AlertTriangle, Users, Video } from 'lucide-react';
 import { DiseasePieChart, DiseaseBarChart } from '../components/Charts';
 
 const Home = () => {
@@ -106,6 +107,45 @@ const Home = () => {
                 </div>
             </div>
           </div>
+
+          {/* VIDEO SECTION: AUTOPLAY ENABLED */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-2 bg-red-100 text-red-600 rounded-lg">
+                <Video className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">Public Awareness Campaign</h3>
+            </div>
+            
+            {/* Video Container */}
+            <div className="w-full aspect-[16/9] bg-black rounded-lg overflow-hidden relative shadow-md group">
+              {/* 
+                  YouTube Parameters Explained:
+                  autoplay=1  -> Auto start
+                  mute=1      -> REQUIRED for autoplay in most browsers
+                  loop=1      -> Loop the video
+                  playlist=ID -> Required for looping a single video
+                  controls=0  -> Hide player controls (cleaner look)
+                  playsinline=1 -> Allow autoplay on mobile/iOS without fullscreen
+                  rel=0       -> Don't show related videos from others
+              */}
+              <iframe 
+                className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                src="https://www.youtube.com/embed/dT2Yg5V2AhY?autoplay=1&mute=1&loop=1&playlist=dT2Yg5V2AhY&controls=0&playsinline=1&rel=0&disablekb=1&modestbranding=1" 
+                title="Health Awareness Video" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
+              
+              {/* Overlay to ensure clicks don't pause it easily (optional, removes interactivity) */}
+              <div className="absolute inset-0 bg-transparent"></div>
+            </div>
+            <p className="text-sm text-slate-500 mt-3 text-center italic">
+              Featured content: Disease prevention and hygiene awareness.
+            </p>
+          </div>
+
         </div>
 
         {/* Right Column: List */}
