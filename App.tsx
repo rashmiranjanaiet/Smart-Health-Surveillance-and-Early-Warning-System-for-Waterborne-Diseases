@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
@@ -5,7 +6,8 @@ import Home from './pages/Home';
 import StateDetails from './pages/StateDetails';
 import AdminLogin from './pages/AdminLogin';
 import AdminPanel from './pages/AdminPanel';
-import { Activity, Shield, Map as MapIcon } from 'lucide-react';
+import QualityIndex from './pages/QualityIndex';
+import { Activity, Shield, Map as MapIcon, Wind } from 'lucide-react';
 
 const Navigation = () => {
   const { user, logout } = useApp();
@@ -26,6 +28,14 @@ const Navigation = () => {
                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/' ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-700'}`}
              >
                Dashboard
+             </Link>
+
+             <Link 
+               to="/quality-index" 
+               className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/quality-index' ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-700'}`}
+             >
+               <Wind className="w-4 h-4" />
+               Quality Index
              </Link>
              
              {user.isAuthenticated ? (
@@ -76,6 +86,7 @@ const App = () => {
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/quality-index" element={<QualityIndex />} />
               <Route path="/state/:stateId" element={<StateDetails />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route 

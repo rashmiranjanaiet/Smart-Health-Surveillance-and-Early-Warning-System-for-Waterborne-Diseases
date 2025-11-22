@@ -6,10 +6,12 @@ import { DiseaseBarChart, DiseasePieChart, AgeGroupChart, SourceTypeChart, Water
 import { generateHealthReport, suggestPreventiveMeasures } from '../services/geminiService';
 import { ArrowLeft, Sparkles, Activity, Thermometer, Droplets, AlertCircle, MapPin, BarChart3, Database, ChevronRight, Building2 } from 'lucide-react';
 import { SubDivisionData } from '../types';
+import { WaterQualityDashboard } from '../components/WaterQualityDashboard';
+import { CampaignTicker } from '../components/CampaignTicker';
 
 const StateDetails = () => {
   const { stateId } = useParams<{ stateId: string }>();
-  const { statesData } = useApp();
+  const { statesData, waterQualityReports } = useApp();
   const state = statesData.find(s => s.id === stateId);
 
   const [aiReport, setAiReport] = useState<string | null>(null);
@@ -134,6 +136,17 @@ const StateDetails = () => {
       };
   }, [activeData, selectedSubDivision, selectedBlock]);
 
+  // 3. Filter Water Quality Reports based on current view
+  const relevantWaterReports = useMemo(() => {
+    return waterQualityReports.filter(r => {
+      if (r.stateId !== state?.id) return false;
+      if (selectedDistrictId && r.districtId !== selectedDistrictId) return false;
+      if (selectedSubDivision && r.subDivision !== selectedSubDivision.name) return false;
+      if (selectedBlock && r.block !== selectedBlock) return false;
+      return true;
+    });
+  }, [waterQualityReports, state, selectedDistrictId, selectedSubDivision, selectedBlock]);
+
   const handleGenerateReport = async () => {
     if (!state) return;
     setLoadingAi(true);
@@ -161,6 +174,10 @@ const StateDetails = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      {/* CAMPAIGN TICKER - Moving Text */}
+      <CampaignTicker />
+
       {/* Breadcrumbs */}
       <div className="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
          <Link to="/" className="hover:text-teal-600">Map</Link>
@@ -356,6 +373,9 @@ const StateDetails = () => {
                 </div>
             )}
           </div>
+          
+          {/* --- NEW FEATURE: WATER QUALITY DASHBOARD --- */}
+          <WaterQualityDashboard reports={relevantWaterReports} />
 
           {/* Detailed Incident Analysis */}
           {detailedStats ? (

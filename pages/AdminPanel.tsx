@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Plus, Save, Trash2, BarChart2, AlertTriangle, MapPin, FileText, X, Building2, Database, ArrowRight, ChevronRight } from 'lucide-react';
+import { Plus, Save, Trash2, BarChart2, AlertTriangle, MapPin, FileText, X, Building2, Database, ArrowRight, ChevronRight, Megaphone } from 'lucide-react';
 import { DiseaseReport, DistrictData, SubDivisionData, DiseaseData } from '../types';
+import { WaterQualityForm } from '../components/WaterQualityForm';
+import { CampaignManager } from '../components/CampaignManager';
 
 const AdminPanel = () => {
   const { user, statesData, updateDiseaseData, addCustomDisease, deleteDisease, addDiseaseReport } = useApp();
@@ -19,6 +21,9 @@ const AdminPanel = () => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedDiseaseForReport, setSelectedDiseaseForReport] = useState<{id: string, name: string} | null>(null);
   
+  // Campaign Manager Modal
+  const [showCampaignManager, setShowCampaignManager] = useState(false);
+
   // Form State
   const [reportForm, setReportForm] = useState({
       sourceType: 'ASHA' as 'ASHA'|'clinic'|'volunteer',
@@ -69,6 +74,12 @@ const AdminPanel = () => {
 
   // Check if the user has drilled down to the required level for reporting
   const isSelectionComplete = () => {
+    // FIX: If the state doesn't have districts configured (e.g. generic states), 
+    // allow reporting at the state level immediately.
+    if (!currentState?.districts || currentState.districts.length === 0) {
+      return true;
+    }
+
     // For Arunachal Pradesh (AR), strict hierarchy is enforced for reporting
     if (currentState?.id === 'AR') {
         if (!selectedDistrictId) return false;
@@ -76,7 +87,8 @@ const AdminPanel = () => {
         if (selectedSubDivision && availableBlocks.length > 0 && !selectedBlock) return false;
         return true;
     }
-    // For other states, just district is usually enough
+    
+    // For other states with districts, district selection is required
     return !!selectedDistrictId;
   };
 
@@ -202,6 +214,10 @@ const AdminPanel = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+      
+      {/* Campaigns Manager Overlay */}
+      {showCampaignManager && <CampaignManager onClose={() => setShowCampaignManager(false)} />}
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard: {currentState.name}</h1>
         <p className="text-slate-500">Manage public health data records</p>
@@ -391,7 +407,7 @@ const AdminPanel = () => {
                                     ${canReport 
                                         ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-md' 
                                         : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'}`}
-                                title={canReport ? "Add Incident Report" : "Select Subdivision and Block to add report"}
+                                title={canReport ? "Add Incident Report" : "Please select a location to file a report"}
                             >
                                 <FileText className="w-4 h-4" />
                                 <span className="text-sm font-medium">Report</span>
@@ -456,6 +472,25 @@ const AdminPanel = () => {
               </div>
           )}
         </div>
+      </div>
+
+      {/* --- NEW FEATURE: WATER QUALITY FORM --- */}
+      <WaterQualityForm 
+        stateId={currentState.id} 
+        districtId={selectedDistrictId}
+        subDivision={selectedSubDivision}
+        block={selectedBlock}
+      />
+
+      {/* --- NEW FEATURE: CAMPAIGN BUTTON --- */}
+      <div className="mt-12 pt-8 border-t border-slate-200 flex justify-center pb-12">
+         <button 
+            onClick={() => setShowCampaignManager(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+         >
+            <Megaphone className="w-5 h-5" />
+            Manage Awareness Campaigns
+         </button>
       </div>
 
       {/* Report Modal */}

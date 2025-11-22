@@ -1,10 +1,12 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { StateData, User, DiseaseData, DistrictData, DiseaseReport } from '../types';
+import { StateData, User, DiseaseData, DistrictData, DiseaseReport, WaterQualityReport, Campaign } from '../types';
 import { getAllStates } from '../constants';
 
 interface AppContextType {
   statesData: StateData[];
+  waterQualityReports: WaterQualityReport[];
+  campaigns: Campaign[];
   user: User;
   login: (stateName: string, password: string) => boolean;
   logout: () => void;
@@ -12,17 +14,65 @@ interface AppContextType {
   addCustomDisease: (stateId: string, diseaseName: string, count: number, districtId?: string) => void;
   deleteDisease: (stateId: string, diseaseId: string, districtId?: string) => void;
   addDiseaseReport: (stateId: string, diseaseId: string, report: DiseaseReport, districtId?: string) => void;
+  addWaterQualityReport: (report: WaterQualityReport) => void;
+  addCampaign: (campaign: Campaign) => void;
+  toggleCampaignStatus: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [statesData, setStatesData] = useState<StateData[]>([]);
+  const [waterQualityReports, setWaterQualityReports] = useState<WaterQualityReport[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [user, setUser] = useState<User>({ isAuthenticated: false, stateId: null, role: 'guest' });
 
   useEffect(() => {
     // Initialize mock database
     setStatesData(getAllStates());
+    
+    // Add some mock water quality data for demo purposes
+    setWaterQualityReports([
+      {
+        id: 'w-1', sampleId: 'S-101', timestamp: '2023-10-26T09:00', siteName: 'Village North Well', siteType: 'Well',
+        latitude: '27.5', longitude: '93.5', collectorId: 'C-01', labId: 'L-A1',
+        ph: 7.2, temperature: 24, turbidity: 5, dissolvedOxygen: 6.5, nitrate: 1.2, eColi: 12,
+        notes: 'Slightly turbid', stateId: 'AR', districtId: 'ar-dist-0'
+      },
+      {
+        id: 'w-2', sampleId: 'S-102', timestamp: '2023-10-26T10:30', siteName: 'River Bend', siteType: 'River',
+        latitude: '27.6', longitude: '93.6', collectorId: 'C-01', labId: 'L-A1',
+        ph: 6.8, temperature: 22, turbidity: 15, dissolvedOxygen: 7.0, nitrate: 3.5, eColi: 45,
+        notes: 'High runoff observed', stateId: 'AR', districtId: 'ar-dist-0'
+      }
+    ]);
+
+    // Add mock campaigns
+    setCampaigns([
+      {
+        id: 'c-1',
+        title: 'Boil Water Advisory — After Heavy Rain',
+        category: 'Boil Water',
+        targetAudience: 'All',
+        mediaType: 'Text',
+        mediaContent: '',
+        description: 'Recent heavy rains increased turbidity. Boil water 10 minutes before drinking.',
+        publishDate: '2023-10-27',
+        isActive: true,
+        autoTrigger: { parameter: 'turbidity_NTU', operator: '>', value: 10 }
+      },
+      {
+        id: 'c-2',
+        title: 'Handwashing Saves Lives',
+        category: 'Hygiene',
+        targetAudience: 'Schools',
+        mediaType: 'Video',
+        mediaContent: 'https://www.youtube.com/embed/dT2Yg5V2AhY', 
+        description: 'Wash hands with soap for 20 secs before eating and after using toilet.',
+        publishDate: '2023-10-25',
+        isActive: true
+      }
+    ]);
   }, []);
 
   const login = (stateName: string, password: string) => {
@@ -207,8 +257,34 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const addWaterQualityReport = (report: WaterQualityReport) => {
+    setWaterQualityReports(prev => [...prev, report]);
+  };
+
+  const addCampaign = (campaign: Campaign) => {
+    setCampaigns(prev => [campaign, ...prev]);
+  };
+
+  const toggleCampaignStatus = (id: string) => {
+    setCampaigns(prev => prev.map(c => c.id === id ? { ...c, isActive: !c.isActive } : c));
+  };
+
   return (
-    <AppContext.Provider value={{ statesData, user, login, logout, updateDiseaseData, addCustomDisease, deleteDisease, addDiseaseReport }}>
+    <AppContext.Provider value={{ 
+      statesData, 
+      user, 
+      waterQualityReports,
+      campaigns,
+      login, 
+      logout, 
+      updateDiseaseData, 
+      addCustomDisease, 
+      deleteDisease, 
+      addDiseaseReport,
+      addWaterQualityReport,
+      addCampaign,
+      toggleCampaignStatus
+    }}>
       {children}
     </AppContext.Provider>
   );

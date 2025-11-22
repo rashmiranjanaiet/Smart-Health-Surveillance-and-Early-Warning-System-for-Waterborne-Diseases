@@ -248,8 +248,6 @@ const AR_STRUCTURE: { district: string; subdivisions: { name: string; blocks: st
 
 const createArunachalDistricts = (): DistrictData[] => {
   return AR_STRUCTURE.map((data, index) => {
-     // For Arunachal, we initialize with 0 cases so the report aggregation (Block -> SubDiv -> Dist)
-     // is crystal clear and not obscured by mock random data.
      const diseases = generateDiseases().map(d => ({
        ...d,
        affected: 0,
@@ -474,4 +472,48 @@ export const INDIA_MAP_PATHS = [
   { id: "GA", name: "Goa", d: "M190 310L200 310L200 315L190 315Z" },
   { id: "KL", name: "Kerala", d: "M210 340L230 340L235 390L215 380Z" },
   { id: "TN", name: "Tamil Nadu", d: "M230 340L260 320L260 380L240 390Z" }
+];
+
+export const INDIAN_CITIES_MAP: Record<string, string[]> = {
+  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Tirupati"],
+  "Arunachal Pradesh": ["Itanagar", "Tawang", "Pasighat", "Ziro", "Bomdila", "Aalo", "Tezu", "Roing"],
+  "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Tezpur", "Nagaon", "Tinsukia"],
+  "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia"],
+  "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg"],
+  "Delhi": ["New Delhi", "Central Delhi", "South Delhi", "North Delhi", "Dwarka"],
+  "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda"],
+  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
+  "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Karnal"],
+  "Himachal Pradesh": ["Shimla", "Manali", "Dharamshala", "Solan", "Mandi"],
+  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Hazaribagh"],
+  "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi"],
+  "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam"],
+  "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain"],
+  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Thane"],
+  "Manipur": ["Imphal", "Churachandpur", "Thoubal", "Kakching", "Ukhrul", "Bishnupur"],
+  "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh", "Williamnagar", "Baghmara"],
+  "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Serchhip", "Kolasib", "Siaha"],
+  "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Tuensang", "Wokha", "Mon"],
+  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur"],
+  "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
+  "Sikkim": ["Gangtok", "Namchi", "Gyalshing", "Mangan", "Pakyong", "Soreng"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+  "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam"],
+  "Tripura": ["Agartala", "Udaipur", "Dharmanagar", "Kailasahar", "Ambassa", "Belonia"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Varanasi", "Agra", "Noida", "Ghaziabad"],
+  "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Nainital"],
+  "West Bengal": ["Kolkata", "Howrah", "Siliguri", "Durgapur", "Asansol"]
+};
+
+// List of NE States for Filtering
+export const NE_STATES = [
+  "Arunachal Pradesh", 
+  "Assam", 
+  "Manipur", 
+  "Meghalaya", 
+  "Mizoram", 
+  "Nagaland", 
+  "Sikkim", 
+  "Tripura"
 ];

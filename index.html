@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,6 +14,20 @@
       ::-webkit-scrollbar-track { background: #f1f1f1; }
       ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
       ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+      /* Marquee Animation */
+      @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+      .animate-marquee {
+        animation: marquee 30s linear infinite;
+        min-width: 100%;
+        display: flex;
+      }
+      .marquee-container:hover .animate-marquee {
+        animation-play-state: paused;
+      }
     </style>
   <script type="importmap">
 {
