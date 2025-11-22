@@ -4,8 +4,7 @@ import { StateData } from "../types";
 
 export const generateHealthReport = async (stateData: StateData): Promise<string> => {
   if (!process.env.API_KEY) {
-    console.warn("API_KEY not found. Returning mock response.");
-    return "API Key is missing. Please configure the environment variable to generate real insights.";
+    return "API Key missing. System is running in simulation mode. (Mock Health Summary: Cases are stable, but monitoring is advised in rural sectors.)";
   }
 
   try {
@@ -32,17 +31,14 @@ export const generateHealthReport = async (stateData: StateData): Promise<string
     return response.text || "No insights generated.";
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    if (error?.status === 'INTERNAL' || error?.code === 500) {
-        return "Service is temporarily unavailable. Please try again in a moment.";
-    }
-    return "Unable to generate report at this time due to technical difficulties.";
+    return "Unable to reach AI service (Free Tier limit may be reached). Please try again in a moment.";
   }
 };
 
 export const suggestPreventiveMeasures = async (diseaseName: string): Promise<string[]> => {
-    if (!process.env.API_KEY) {
-        return ["Wash hands regularly", "Drink boiled water", "Avoid street food"];
-    }
+    const defaults = ["Wash hands regularly", "Drink boiled water", "Avoid street food"];
+    if (!process.env.API_KEY) return defaults;
+
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const response = await ai.models.generateContent({
@@ -57,211 +53,65 @@ export const suggestPreventiveMeasures = async (diseaseName: string): Promise<st
         if(text) {
             return JSON.parse(text);
         }
-        return ["Consult a doctor immediately"];
+        return defaults;
     } catch (e) {
         console.error(e);
-        return ["Maintain hygiene", "Sanitize water", "Vaccinate if available"];
+        return defaults;
     }
 }
 
 export const getAirQualityAnalysis = async (location: {state: string, city: string, station: string, date: string, time: string}) => {
   if (!process.env.API_KEY) return null;
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-  const prompt = `
-    Generate a detailed Air Quality Index (AQI) report for:
-    Location: ${location.station || 'City Center'}, ${location.city}, ${location.state}, India
-    Time: ${location.date} at ${location.time}
-
-    Provide realistic values typical for this region and season.
-    Return a JSON object with:
-    - aqi (number 0-500)
-    - status (Good, Satisfactory, Moderate, Poor, Very Poor, Severe)
-    - primary_pollutant (string)
-    - pollutants: object with pm25, pm10, no2, so2, co, o3 (values in µg/m3)
-    - health_advice (string)
-    - weather: object with temp (celsius), humidity (%), wind_speed (km/h)
-    - coordinates: object with lat, lng (approximate for the city/station)
-  `;
-
-  try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: {
-             type: Type.OBJECT,
-             properties: {
-               aqi: { type: Type.INTEGER },
-               status: { type: Type.STRING },
-               primary_pollutant: { type: Type.STRING },
-               pollutants: {
-                 type: Type.OBJECT,
-                 properties: {
-                    pm25: { type: Type.NUMBER },
-                    pm10: { type: Type.NUMBER },
-                    no2: { type: Type.NUMBER },
-                    so2: { type: Type.NUMBER },
-                    co: { type: Type.NUMBER },
-                    o3: { type: Type.NUMBER }
-                 }
-               },
-               health_advice: { type: Type.STRING },
-               weather: {
-                 type: Type.OBJECT,
-                 properties: {
-                    temp: { type: Type.NUMBER },
-                    humidity: { type: Type.INTEGER },
-                    wind_speed: { type: Type.NUMBER }
-                 }
-               },
-               coordinates: {
-                 type: Type.OBJECT,
-                 properties: {
-                    lat: { type: Type.NUMBER },
-                    lng: { type: Type.NUMBER }
-                 }
-               }
-             }
-          }
-        }
-      });
-      
-      return JSON.parse(response.text || "{}");
-  } catch (error) {
-      console.error("Error fetching AQI:", error);
-      return null;
-  }
+  // Legacy function kept for compatibility, but logic similar to advanced report recommended
+  return null; 
 };
 
 export const getWaterQualityAnalysis = async (location: {state: string, city: string, source: string, date: string}) => {
-  if (!process.env.API_KEY) return null;
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-  const prompt = `
-    Generate a Surface Water Quality report for:
-    Location: ${location.city}, ${location.state}, India
-    Source Type: ${location.source}
-    Date: ${location.date}
-
-    Provide realistic values.
-    Return JSON:
-    - wqi (Water Quality Index 0-100)
-    - status (Excellent, Good, Poor, Very Poor, Unfit for consumption)
-    - parameters: ph (6-9), turbidity (NTU), tds (mg/L), do (Dissolved Oxygen mg/L), bod (mg/L), ecoli (CFU/100ml)
-    - health_advice (string)
-    - coordinates: lat, lng
-  `;
-
-  try {
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: {
-             type: Type.OBJECT,
-             properties: {
-               wqi: { type: Type.INTEGER },
-               status: { type: Type.STRING },
-               parameters: {
-                 type: Type.OBJECT,
-                 properties: {
-                    ph: { type: Type.NUMBER },
-                    turbidity: { type: Type.NUMBER },
-                    tds: { type: Type.NUMBER },
-                    do: { type: Type.NUMBER },
-                    bod: { type: Type.NUMBER },
-                    ecoli: { type: Type.NUMBER }
-                 }
-               },
-               health_advice: { type: Type.STRING },
-               coordinates: {
-                 type: Type.OBJECT,
-                 properties: {
-                    lat: { type: Type.NUMBER },
-                    lng: { type: Type.NUMBER }
-                 }
-               }
-             }
-          }
-        }
-    });
-    return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+  // Legacy function kept for compatibility
+  return null;
 };
 
 export const getGroundWaterAnalysis = async (location: {state: string, district: string, block: string, date: string}) => {
-  if (!process.env.API_KEY) return null;
+  // Legacy function kept for compatibility
+  return null;
+};
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-  const prompt = `
-    Generate a Ground Water Quality & Level report for:
-    Location: ${location.block} Block, ${location.district}, ${location.state}, India
-    Date: ${location.date}
-
-    Provide realistic data for rural/urban India context.
-    Return JSON:
-    - level_status (Safe, Semi-Critical, Critical, Over-exploited)
-    - depth_to_water_level (meters below ground level)
-    - parameters: ph, fluoride (mg/L), arsenic (mg/L), nitrate (mg/L), iron (mg/L), salinity (mg/L)
-    - health_advice (string)
-    - coordinates: lat, lng
-  `;
-
-  try {
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: {
-             type: Type.OBJECT,
-             properties: {
-               level_status: { type: Type.STRING },
-               depth_to_water_level: { type: Type.NUMBER },
-               parameters: {
-                 type: Type.OBJECT,
-                 properties: {
-                    ph: { type: Type.NUMBER },
-                    fluoride: { type: Type.NUMBER },
-                    arsenic: { type: Type.NUMBER },
-                    nitrate: { type: Type.NUMBER },
-                    iron: { type: Type.NUMBER },
-                    salinity: { type: Type.NUMBER }
-                 }
-               },
-               health_advice: { type: Type.STRING },
-               coordinates: {
-                 type: Type.OBJECT,
-                 properties: {
-                    lat: { type: Type.NUMBER },
-                    lng: { type: Type.NUMBER }
-                 }
-               }
-             }
-          }
-        }
-    });
-    return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+// --- MOCK GENERATOR FOR FREE TIER FALLBACK ---
+const getMockAdvancedReport = (reportType: string, location: {city: string}) => {
+  const isWater = reportType.toLowerCase().includes('water');
+  const isDisease = reportType.toLowerCase().includes('disease') || reportType.toLowerCase().includes('hospital');
+  const isMosquito = reportType.toLowerCase().includes('mosquito');
+  
+  return {
+    title: `${reportType} - Simulated Analysis`,
+    overall_status: isWater ? "Moderate Risk" : isDisease ? "Elevated" : "Safe",
+    score: Math.floor(Math.random() * 40) + 60,
+    summary: `This is a simulated report for ${location.city} because the AI service is currently unreachable (likely Free Tier rate limit). Data suggests ${isWater ? 'elevated turbidity levels following recent rainfall' : isDisease ? 'a slight uptick in seasonal viral cases' : 'nominal environmental parameters'}. Local authorities are advised to monitor the situation.`,
+    key_metrics: [
+      { name: isWater ? "pH Level" : isDisease ? "Daily OPD" : "Larval Density", value: isWater ? "7.4" : isDisease ? "145" : "12", unit: isWater ? "" : isDisease ? "patients" : "per dip", status: "Neutral" },
+      { name: isWater ? "Turbidity" : isDisease ? "Viral Fever" : "Fogging Coverage", value: isWater ? "12" : isDisease ? "45" : "85", unit: isWater ? "NTU" : isDisease ? "cases" : "%", status: isWater ? "Bad" : "Neutral" },
+      { name: isWater ? "Dissolved Oxygen" : isDisease ? "Bed Occupancy" : "Stagnant Water", value: isWater ? "6.2" : isDisease ? "68" : "Low", unit: isWater ? "mg/L" : isDisease ? "%" : "risk", status: "Good" },
+      { name: isWater ? "E. Coli" : isDisease ? "Critical Cases" : "Vector Index", value: isWater ? "4" : isDisease ? "2" : "0.4", unit: isWater ? "CFU" : isDisease ? "cases" : "", status: "Good" }
+    ],
+    alerts: ["Simulated Alert: Data based on historical averages due to connection issue."],
+    recommendations: ["Check internet connection or API quota.", "Verify field data manually before taking action.", "Proceed with standard operating procedures."],
+    coordinates: {
+      lat: 26.1445, // Default fallback (Guwahati approx)
+      lng: 91.7362
+    },
+    is_simulated: true
+  };
 };
 
 export const getAdvancedReport = async (
   reportType: string,
   location: { state: string; city: string; date: string; time?: string }
 ) => {
-  if (!process.env.API_KEY) return null;
+  // 1. Check Key Existence
+  if (!process.env.API_KEY) {
+    console.warn("No API Key found. Returning mock.");
+    return getMockAdvancedReport(reportType, location);
+  }
 
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -325,9 +175,12 @@ export const getAdvancedReport = async (
       }
     });
 
-    return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error("Advanced Report Error:", error);
-    return null;
+    const result = JSON.parse(response.text || "{}");
+    return { ...result, is_simulated: false };
+
+  } catch (error: any) {
+    console.error("Advanced Report Error (likely API limit):", error);
+    // 2. Fallback on Error (Rate Limit, Quota, Network)
+    return getMockAdvancedReport(reportType, location);
   }
 };

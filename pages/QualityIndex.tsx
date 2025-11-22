@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Droplets, CloudRain, Waves, Activity, Building2, Pipette, Bug, FileWarning, Stethoscope, MapPin, Calendar, Clock, Search, ArrowRight, Info, AlertTriangle } from 'lucide-react';
+import { Droplets, CloudRain, Waves, Activity, Building2, Pipette, Bug, FileWarning, Stethoscope, MapPin, Calendar, Clock, Search, ArrowRight, Info, AlertTriangle, Zap, RefreshCw } from 'lucide-react';
 import { INDIAN_CITIES_MAP, NE_STATES } from '../constants';
 import { getAdvancedReport } from '../services/geminiService';
 import { 
@@ -13,7 +13,7 @@ const REPORT_TYPES = [
   { id: 'bacterial_test', name: 'Bacterial Test Results', icon: Pipette, color: 'bg-purple-100 text-purple-600' },
   { id: 'turbidity_ph', name: 'Turbidity & pH Levels', icon: Waves, color: 'bg-teal-100 text-teal-600' },
   { id: 'rainfall_flood', name: 'Rainfall & Flood Alerts', icon: CloudRain, color: 'bg-sky-100 text-sky-600' },
-  { id: 'groundwater', name: 'Groundwater Status', icon: ArrowRight, color: 'bg-amber-100 text-amber-600' }, // Arrow as placeholder for specific icon
+  { id: 'groundwater', name: 'Groundwater Status', icon: ArrowRight, color: 'bg-amber-100 text-amber-600' }, 
   { id: 'disease_cases', name: 'Daily Disease Cases', icon: Activity, color: 'bg-red-100 text-red-600' },
   { id: 'hospital_opd', name: 'Hospital OPD Summary', icon: Stethoscope, color: 'bg-pink-100 text-pink-600' },
   { id: 'pipeline_leakage', name: 'Pipeline Leakage Reports', icon: FileWarning, color: 'bg-orange-100 text-orange-600' },
@@ -227,8 +227,20 @@ const QualityIndex = () => {
                   <div className="animate-fade-in space-y-6">
                       
                       {/* Title Card */}
-                      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                          <div className="flex justify-between items-start">
+                      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+                          {/* Simulation Badge for Free Tier */}
+                          {data.is_simulated && (
+                             <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-amber-200 flex items-center gap-1">
+                                <RefreshCw className="w-3 h-3" /> Simulated Data (Free Tier Limit)
+                             </div>
+                          )}
+                          {!data.is_simulated && (
+                             <div className="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-green-200 flex items-center gap-1">
+                                <Zap className="w-3 h-3" /> Live AI Analysis
+                             </div>
+                          )}
+
+                          <div className="flex justify-between items-start mt-2">
                               <div>
                                   <h2 className="text-2xl font-bold text-slate-900">{data.title}</h2>
                                   <p className="text-sm text-slate-500 mt-1">{selectedReport.name} • {form.city}, {form.state}</p>
