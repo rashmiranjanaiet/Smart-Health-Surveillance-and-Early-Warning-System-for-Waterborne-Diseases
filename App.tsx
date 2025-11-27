@@ -7,11 +7,17 @@ import StateDetails from './pages/StateDetails';
 import AdminLogin from './pages/AdminLogin';
 import AdminPanel from './pages/AdminPanel';
 import QualityIndex from './pages/QualityIndex';
-import { Activity, Shield, Map as MapIcon, Wind } from 'lucide-react';
+import WaterGuardGame from './pages/WaterGuardGame';
+import { Activity, Shield, Map as MapIcon, Wind, Gamepad2 } from 'lucide-react';
 
 const Navigation = () => {
   const { user, logout } = useApp();
   const location = useLocation();
+
+  // Hide standard nav inside the game for immersion
+  if (location.pathname === '/game') {
+    return null;
+  }
 
   return (
     <nav className="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
@@ -36,6 +42,14 @@ const Navigation = () => {
              >
                <Wind className="w-4 h-4" />
                Quality Index
+             </Link>
+
+             <Link 
+               to="/game" 
+               className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-bold transition-colors bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg transform hover:scale-105"
+             >
+               <Gamepad2 className="w-4 h-4" />
+               WaterGuard Hero
              </Link>
              
              {user.isAuthenticated ? (
@@ -74,7 +88,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
   if (!user.isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
   }
-  return children;
+  return <>{children}</>;
 };
 
 const App = () => {
@@ -87,25 +101,33 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/quality-index" element={<QualityIndex />} />
+              <Route path="/game" element={<WaterGuardGame />} />
               <Route path="/state/:stateId" element={<StateDetails />} />
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route 
-                path="/admin/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <AdminPanel />
-                  </ProtectedRoute>
-                } 
-              />
+              <Route path="/admin/dashboard" element={
+                <ProtectedRoute>
+                  <AdminPanel />
+                </ProtectedRoute>
+              } />
             </Routes>
           </main>
-          <footer className="bg-slate-900 text-slate-400 py-6 text-center text-sm">
-             <p>© {new Date().getFullYear()} IndiaHealth Track. Disease Monitoring System.</p>
-          </footer>
+          <NavigationFooterWrapper />
         </div>
       </Router>
     </AppProvider>
   );
 };
+
+// Helper to hide footer in game
+const NavigationFooterWrapper = () => {
+  const location = useLocation();
+  if (location.pathname === '/game') return null;
+  
+  return (
+    <footer className="bg-slate-900 text-slate-400 py-6 text-center text-sm">
+        <p>© {new Date().getFullYear()} IndiaHealth Track. Disease Monitoring System.</p>
+    </footer>
+  );
+}
 
 export default App;
