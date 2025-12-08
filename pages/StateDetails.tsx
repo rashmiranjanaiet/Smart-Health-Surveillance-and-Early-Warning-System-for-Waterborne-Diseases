@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { DiseaseBarChart, DiseasePieChart, AgeGroupChart, SourceTypeChart, WaterSourceChart } from '../components/Charts';
 import { generateHealthReport, suggestPreventiveMeasures } from '../services/geminiService';
-import { ArrowLeft, Sparkles, Activity, Thermometer, Droplets, AlertCircle, MapPin, BarChart3, Database, ChevronRight, Building2 } from 'lucide-react';
+import { ChevronRight, Activity, MapPin, Building2, Database, Sparkles, Lightbulb } from 'lucide-react';
 import { SubDivisionData } from '../types';
 import { WaterQualityDashboard } from '../components/WaterQualityDashboard';
 import { CampaignTicker } from '../components/CampaignTicker';
@@ -165,26 +165,26 @@ const StateDetails = () => {
 
   if (!state || !activeData) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h2 className="text-2xl font-bold text-slate-800">State Not Found</h2>
-        <Link to="/" className="text-teal-600 hover:underline mt-4">Go Home</Link>
+      <div className="flex flex-col items-center justify-center h-screen dark:bg-slate-900">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white">State Not Found</h2>
+        <Link to="/" className="text-teal-600 dark:text-teal-400 hover:underline mt-4">Go Home</Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-colors">
       
       {/* CAMPAIGN TICKER - Moving Text */}
       <CampaignTicker />
 
       {/* Breadcrumbs */}
-      <div className="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
-         <Link to="/" className="hover:text-teal-600">Map</Link>
+      <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6 flex-wrap">
+         <Link to="/" className="hover:text-teal-600 dark:hover:text-teal-400">Map</Link>
          <ChevronRight className="w-4 h-4" />
          <button 
             onClick={() => { setSelectedDistrictId(null); setSelectedSubDivision(null); }} 
-            className={`hover:text-teal-600 ${!selectedDistrictId ? 'font-bold text-slate-800' : ''}`}
+            className={`hover:text-teal-600 dark:hover:text-teal-400 ${!selectedDistrictId ? 'font-bold text-slate-800 dark:text-white' : ''}`}
          >
              {state.name}
          </button>
@@ -193,7 +193,7 @@ const StateDetails = () => {
                 <ChevronRight className="w-4 h-4" />
                 <button 
                     onClick={() => { setSelectedSubDivision(null); setSelectedBlock(null); }}
-                    className={`hover:text-teal-600 ${!selectedSubDivision ? 'font-bold text-slate-800' : ''}`}
+                    className={`hover:text-teal-600 dark:hover:text-teal-400 ${!selectedSubDivision ? 'font-bold text-slate-800 dark:text-white' : ''}`}
                 >
                     {selectedDistrict?.name}
                 </button>
@@ -204,7 +204,7 @@ const StateDetails = () => {
                 <ChevronRight className="w-4 h-4" />
                 <button
                     onClick={() => setSelectedBlock(null)}
-                    className={`hover:text-teal-600 ${!selectedBlock ? 'font-bold text-slate-800' : ''}`}
+                    className={`hover:text-teal-600 dark:hover:text-teal-400 ${!selectedBlock ? 'font-bold text-slate-800 dark:text-white' : ''}`}
                 >
                     {selectedSubDivision.name}
                 </button>
@@ -213,17 +213,17 @@ const StateDetails = () => {
          {selectedBlock && (
              <>
                 <ChevronRight className="w-4 h-4" />
-                <span className="font-bold text-slate-800">{selectedBlock}</span>
+                <span className="font-bold text-slate-800 dark:text-white">{selectedBlock}</span>
              </>
          )}
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 {selectedBlock || (selectedSubDivision ? selectedSubDivision.name : activeData.name)}
             </h1>
-            <p className="text-slate-500 mt-1">
+            <p className="text-slate-500 dark:text-slate-400 mt-1">
                 {selectedBlock 
                     ? 'Block Level Analytics' 
                     : selectedSubDivision 
@@ -233,7 +233,7 @@ const StateDetails = () => {
                             : 'State Level Dashboard'}
             </p>
         </div>
-        <div className="flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-lg border border-red-100">
+        <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-4 py-2 rounded-lg border border-red-100 dark:border-red-800/50">
             <Activity className="w-5 h-5" />
             <span className="font-bold">{totalActiveCases}</span>
             <span className="text-sm">Active Cases</span>
@@ -245,17 +245,17 @@ const StateDetails = () => {
       {/* 1. Select District (If none selected) */}
       {state.districts && !selectedDistrictId && (
           <div className="mb-8">
-              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-teal-600" /> Select District
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-teal-600 dark:text-teal-400" /> Select District
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                   {state.districts.map(d => (
                       <button
                         key={d.id}
                         onClick={() => setSelectedDistrictId(d.id)}
-                        className="p-3 rounded-lg border border-slate-200 bg-white hover:border-teal-500 hover:shadow-md transition-all text-left group"
+                        className="p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-teal-500 dark:hover:border-teal-400 hover:shadow-md transition-all text-left group"
                       >
-                          <p className="font-semibold text-slate-700 text-sm truncate group-hover:text-teal-700">{d.name}</p>
+                          <p className="font-semibold text-slate-700 dark:text-slate-200 text-sm truncate group-hover:text-teal-700 dark:group-hover:text-teal-400">{d.name}</p>
                           <p className="text-xs text-slate-400 mt-1">{d.totalAffected} cases</p>
                       </button>
                   ))}
@@ -266,18 +266,18 @@ const StateDetails = () => {
       {/* 2. Select Subdivision (If District selected but no Subdivision) */}
       {selectedDistrict && selectedDistrict.subDivisions && !selectedSubDivision && (
           <div className="mb-8 animate-fade-in">
-              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-indigo-600" /> Subdivisions in {selectedDistrict.name}
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Subdivisions in {selectedDistrict.name}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {selectedDistrict.subDivisions.map((sub, idx) => (
                       <button
                         key={idx}
                         onClick={() => setSelectedSubDivision(sub)}
-                        className="p-4 rounded-lg border border-indigo-100 bg-indigo-50/50 hover:bg-indigo-50 hover:border-indigo-300 transition-all text-left"
+                        className="p-4 rounded-lg border border-indigo-100 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-900/20 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all text-left"
                       >
-                          <p className="font-bold text-indigo-900">{sub.name}</p>
-                          <p className="text-xs text-indigo-500 mt-1">{sub.blocks.length} Blocks</p>
+                          <p className="font-bold text-indigo-900 dark:text-indigo-200">{sub.name}</p>
+                          <p className="text-xs text-indigo-500 dark:text-indigo-400 mt-1">{sub.blocks.length} Blocks</p>
                       </button>
                   ))}
               </div>
@@ -287,8 +287,8 @@ const StateDetails = () => {
       {/* 3. Select Blocks (If Subdivision selected) */}
       {selectedSubDivision && (
           <div className="mb-8 animate-fade-in">
-              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <Database className="w-5 h-5 text-purple-600" /> Blocks / Circles in {selectedSubDivision.name}
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                  <Database className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Blocks / Circles in {selectedSubDivision.name}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                   {selectedSubDivision.blocks.map((block, idx) => (
@@ -298,7 +298,7 @@ const StateDetails = () => {
                         className={`p-3 rounded-lg border text-center transition-all
                             ${selectedBlock === block.name 
                                 ? 'bg-purple-600 text-white border-purple-600 shadow-md ring-2 ring-offset-1 ring-purple-200' 
-                                : 'bg-purple-50 border-purple-100 text-purple-900 hover:bg-purple-100 hover:border-purple-200'
+                                : 'bg-purple-50 dark:bg-purple-900/20 border-purple-100 dark:border-purple-800 text-purple-900 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-purple-900/40 hover:border-purple-200'
                             }
                         `}
                       >
@@ -317,20 +317,20 @@ const StateDetails = () => {
           {/* Disease Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {displayedDiseases.map(d => (
-                <div key={d.id} className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                <div key={d.id} className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-slate-800">{d.name}</h3>
+                        <h3 className="font-semibold text-slate-800 dark:text-white">{d.name}</h3>
                         {d.trend === 'up' ? (
-                             <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">Rising</span>
+                             <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs px-2 py-1 rounded-full">Rising</span>
                         ) : d.trend === 'down' ? (
-                             <span className="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full">Falling</span>
+                             <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs px-2 py-1 rounded-full">Falling</span>
                         ) : (
-                            <span className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full">Stable</span>
+                            <span className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs px-2 py-1 rounded-full">Stable</span>
                         )}
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-bold text-slate-900">{d.affected}</span>
-                        <span className="text-sm text-slate-500">cases</span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{d.affected}</span>
+                        <span className="text-sm text-slate-500 dark:text-slate-400">cases</span>
                     </div>
                     <p className="text-xs text-slate-400 mt-2">
                         {selectedBlock ? 'In Selected Block' : selectedSubDivision ? 'In Selected Subdivision' : 'District Total'}
@@ -338,8 +338,8 @@ const StateDetails = () => {
                     
                     {/* Micro prevention tip */}
                     {preventionTips[d.name] && (
-                        <div className="mt-3 pt-3 border-t border-slate-100">
-                            <p className="text-xs text-teal-600 font-medium flex items-center gap-1">
+                        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+                            <p className="text-xs text-teal-600 dark:text-teal-400 font-medium flex items-center gap-1">
                                 <Sparkles className="w-3 h-3" /> Tip: {preventionTips[d.name][0]}
                             </p>
                         </div>
@@ -349,26 +349,26 @@ const StateDetails = () => {
           </div>
 
           {/* Charts Area */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h3 className="text-lg font-bold text-slate-800 mb-6 flex justify-between items-center">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex justify-between items-center">
                 Visual Analysis
-                <span className="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                <span className="text-xs font-normal text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">
                     Scope: {selectedBlock || selectedSubDivision?.name || activeData.name}
                 </span>
             </h3>
             {totalActiveCases > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="h-72">
-                        <h4 className="text-center text-sm text-slate-500 mb-2">Distribution</h4>
+                        <h4 className="text-center text-sm text-slate-500 dark:text-slate-400 mb-2">Distribution</h4>
                         <DiseasePieChart data={displayedDiseases} />
                     </div>
                     <div className="h-72">
-                        <h4 className="text-center text-sm text-slate-500 mb-2">Case Count</h4>
+                        <h4 className="text-center text-sm text-slate-500 dark:text-slate-400 mb-2">Case Count</h4>
                         <DiseaseBarChart data={displayedDiseases} />
                     </div>
                 </div>
             ) : (
-                <div className="h-48 flex items-center justify-center text-slate-400 bg-slate-50 rounded-lg">
+                <div className="h-48 flex items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
                     <p>No active cases reported in this specific area.</p>
                 </div>
             )}
@@ -379,32 +379,32 @@ const StateDetails = () => {
 
           {/* Detailed Incident Analysis */}
           {detailedStats ? (
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 animate-fade-in">
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 animate-fade-in transition-colors">
                   <div className="flex items-center gap-3 mb-6">
-                      <div className="bg-indigo-100 p-2 rounded-full text-indigo-600">
+                      <div className="bg-indigo-100 dark:bg-indigo-900/30 p-2 rounded-full text-indigo-600 dark:text-indigo-400">
                           <Database className="w-5 h-5" />
                       </div>
                       <div>
-                          <h3 className="text-lg font-bold text-slate-800">Detailed Incident Analysis</h3>
-                          <p className="text-xs text-slate-500">Based on {detailedStats.totalReports} specific reports</p>
+                          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Detailed Incident Analysis</h3>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">Based on {detailedStats.totalReports} specific reports</p>
                       </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="h-64">
-                          <h4 className="text-center text-xs font-bold text-slate-600 uppercase mb-2">Age Group Demographics</h4>
+                          <h4 className="text-center text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-2">Age Group Demographics</h4>
                           <AgeGroupChart data={detailedStats.ageData} />
                       </div>
                       <div className="h-64">
-                          <h4 className="text-center text-xs font-bold text-slate-600 uppercase mb-2">Source of Report</h4>
+                          <h4 className="text-center text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-2">Source of Report</h4>
                           <SourceTypeChart data={detailedStats.sourceData} />
                       </div>
                       <div className="h-64">
-                          <h4 className="text-center text-xs font-bold text-slate-600 uppercase mb-2">Linked Water Sources</h4>
+                          <h4 className="text-center text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-2">Linked Water Sources</h4>
                           {detailedStats.waterData.length > 0 ? (
                              <WaterSourceChart data={detailedStats.waterData} />
                           ) : (
-                              <div className="h-full flex items-center justify-center text-xs text-slate-400">
+                              <div className="h-full flex items-center justify-center text-xs text-slate-400 dark:text-slate-500">
                                   No water source data available
                               </div>
                           )}
@@ -413,7 +413,7 @@ const StateDetails = () => {
               </div>
           ) : (
               selectedSubDivision && (
-                  <div className="bg-slate-50 p-8 text-center rounded-xl border border-slate-100 border-dashed text-slate-400">
+                  <div className="bg-slate-50 dark:bg-slate-800 p-8 text-center rounded-xl border border-slate-100 dark:border-slate-700 border-dashed text-slate-400 dark:text-slate-500">
                       Detailed incident analysis will appear here once data reports are filed for this location.
                   </div>
               )
@@ -423,15 +423,15 @@ const StateDetails = () => {
         {/* Right Column: AI Insights & Table */}
         <div className="space-y-8">
            {/* AI Insight Card */}
-           <div className="bg-gradient-to-br from-teal-50 to-white p-6 rounded-xl border border-teal-100 shadow-sm">
+           <div className="bg-gradient-to-br from-teal-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border border-teal-100 dark:border-slate-700 shadow-sm transition-colors">
              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-teal-600" />
-                <h3 className="font-bold text-teal-900">AI Health Report</h3>
+                <Sparkles className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                <h3 className="font-bold text-teal-900 dark:text-teal-100">AI Health Report</h3>
              </div>
              
              {!aiReport ? (
                 <div className="text-center py-6">
-                    <p className="text-slate-600 mb-4 text-sm">
+                    <p className="text-slate-600 dark:text-slate-300 mb-4 text-sm">
                         Generate an executive summary of current health trends for {selectedBlock || activeData.name} using Gemini AI.
                     </p>
                     <button 
@@ -448,12 +448,27 @@ const StateDetails = () => {
                 </div>
              ) : (
                  <div className="animate-fade-in">
-                     <div className="prose prose-sm text-slate-700 mb-4">
-                         {aiReport}
+                     <div className="text-sm text-slate-700 dark:text-slate-300 mb-4 space-y-3">
+                        {aiReport.split('\n').map((line, i) => {
+                            if (!line.trim()) return null;
+                            if (line.includes('RECOMMENDATION:') || line.includes('Recommendation:')) {
+                                const content = line.replace(/RECOMMENDATION:|Recommendation:/i, '').trim();
+                                return (
+                                    <div key={i} className="mt-3 bg-teal-50 dark:bg-teal-900/30 border-l-4 border-teal-500 p-4 rounded-r-lg shadow-sm">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Lightbulb className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                                            <span className="font-bold text-teal-900 dark:text-teal-100 text-xs uppercase tracking-wider">Actionable Recommendation</span>
+                                        </div>
+                                        <p className="text-teal-800 dark:text-teal-200 font-medium leading-relaxed">{content}</p>
+                                    </div>
+                                )
+                            }
+                            return <p key={i} className="mb-2 last:mb-0 leading-relaxed">{line}</p>
+                        })}
                      </div>
                      <button 
                         onClick={() => setAiReport(null)}
-                        className="text-xs text-teal-600 hover:underline"
+                        className="text-xs text-teal-600 dark:text-teal-400 hover:underline"
                      >
                         Refresh Analysis
                      </button>
@@ -462,25 +477,25 @@ const StateDetails = () => {
            </div>
 
            {/* Data Table */}
-           <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-               <div className="px-6 py-4 bg-slate-50 border-b border-slate-100">
-                   <h3 className="font-semibold text-slate-800">Detailed Records</h3>
+           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
+               <div className="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700">
+                   <h3 className="font-semibold text-slate-800 dark:text-white">Detailed Records</h3>
                </div>
                <table className="w-full text-sm text-left">
-                   <thead className="text-xs text-slate-500 uppercase bg-slate-50">
+                   <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-800">
                        <tr>
                            <th className="px-6 py-3">Disease</th>
                            <th className="px-6 py-3 text-right">Affected</th>
                            <th className="px-6 py-3 text-right">Trend</th>
                        </tr>
                    </thead>
-                   <tbody>
+                   <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                        {displayedDiseases.map(d => (
-                           <tr key={d.id} className="border-b border-slate-50 hover:bg-slate-50">
-                               <td className="px-6 py-4 font-medium text-slate-900">{d.name}</td>
-                               <td className="px-6 py-4 text-right">{d.affected}</td>
+                           <tr key={d.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                               <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{d.name}</td>
+                               <td className="px-6 py-4 text-right text-slate-700 dark:text-slate-300">{d.affected}</td>
                                <td className="px-6 py-4 text-right">
-                                   <span className={`px-2 py-1 rounded text-xs ${d.trend === 'up' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+                                   <span className={`px-2 py-1 rounded text-xs ${d.trend === 'up' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
                                        {d.trend}
                                    </span>
                                </td>
@@ -488,7 +503,7 @@ const StateDetails = () => {
                        ))}
                        {displayedDiseases.length === 0 && (
                            <tr>
-                               <td colSpan={3} className="px-6 py-8 text-center text-slate-400">
+                               <td colSpan={3} className="px-6 py-8 text-center text-slate-400 dark:text-slate-500">
                                    No records found for this selection.
                                </td>
                            </tr>

@@ -10,26 +10,23 @@ import {
 } from 'recharts';
 
 const REPORT_KEYS = [
-  { id: 'water_quality', key: 'Water Quality Report', icon: Droplets, color: 'bg-blue-100 text-blue-600' },
-  { id: 'bacterial_test', key: 'Bacterial Test Results', icon: Pipette, color: 'bg-purple-100 text-purple-600' },
-  { id: 'turbidity_ph', key: 'Turbidity & pH Levels', icon: Waves, color: 'bg-teal-100 text-teal-600' },
-  { id: 'rainfall_flood', key: 'Rainfall & Flood Alerts', icon: CloudRain, color: 'bg-sky-100 text-sky-600' },
-  { id: 'groundwater', key: 'Groundwater Status', icon: ArrowRight, color: 'bg-amber-100 text-amber-600' }, 
-  { id: 'disease_cases', key: 'Daily Disease Cases', icon: Activity, color: 'bg-red-100 text-red-600' },
-  { id: 'hospital_opd', key: 'Hospital OPD Summary', icon: Stethoscope, color: 'bg-pink-100 text-pink-600' },
-  { id: 'pipeline_leakage', key: 'Pipeline Leakage Reports', icon: FileWarning, color: 'bg-orange-100 text-orange-600' },
-  { id: 'wastewater', key: 'Wastewater Overflow Alerts', icon: Waves, color: 'bg-stone-100 text-stone-600' },
-  { id: 'mosquito', key: 'Mosquito Breeding Spots', icon: Bug, color: 'bg-green-100 text-green-600' },
+  { id: 'water_quality', key: 'Water Quality Report', icon: Droplets, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' },
+  { id: 'bacterial_test', key: 'Bacterial Test Results', icon: Pipette, color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' },
+  { id: 'turbidity_ph', key: 'Turbidity & pH Levels', icon: Waves, color: 'bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-400' },
+  { id: 'rainfall_flood', key: 'Rainfall & Flood Alerts', icon: CloudRain, color: 'bg-sky-100 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400' },
+  { id: 'groundwater', key: 'Groundwater Status', icon: ArrowRight, color: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' }, 
+  { id: 'disease_cases', key: 'Daily Disease Cases', icon: Activity, color: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' },
+  { id: 'hospital_opd', key: 'Hospital OPD Summary', icon: Stethoscope, color: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400' },
+  { id: 'pipeline_leakage', key: 'Pipeline Leakage Reports', icon: FileWarning, color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400' },
+  { id: 'wastewater', key: 'Wastewater Overflow Alerts', icon: Waves, color: 'bg-stone-100 text-stone-600 dark:bg-stone-900/30 dark:text-stone-400' },
+  { id: 'mosquito', key: 'Mosquito Breeding Spots', icon: Bug, color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' },
 ];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 const QualityIndex = () => {
   const { t } = useLanguage();
-  // State for selected report type
   const [selectedReport, setSelectedReport] = useState(REPORT_KEYS[0]);
-
-  // Form State
   const [form, setForm] = useState({
     state: '',
     city: '',
@@ -49,7 +46,6 @@ const QualityIndex = () => {
     setLoading(true);
     setData(null);
 
-    // We send the English name to the AI for consistency, even if displayed in other language
     const result = await getAdvancedReport(selectedReport.key, {
       state: form.state,
       city: form.city,
@@ -61,7 +57,6 @@ const QualityIndex = () => {
     setLoading(false);
   };
 
-  // Helper for Map URL
   const getMapUrl = () => {
     if (data && data.coordinates) {
        return `https://maps.google.com/maps?q=${data.coordinates.lat},${data.coordinates.lng}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
@@ -70,12 +65,13 @@ const QualityIndex = () => {
     return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&t=&z=12&ie=UTF8&iwloc=&output=embed`;
   };
 
-  // Color helper for status
   const getStatusColor = (status: string) => {
     const s = status?.toLowerCase() || '';
-    if (s.includes('good') || s.includes('safe') || s.includes('low') || s.includes('excellent')) return 'text-green-600 bg-green-50 border-green-200';
-    if (s.includes('moderate') || s.includes('satisfactory')) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    return 'text-red-600 bg-red-50 border-red-200';
+    if (s.includes('good') || s.includes('safe') || s.includes('low') || s.includes('excellent')) 
+        return 'text-green-600 bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400';
+    if (s.includes('moderate') || s.includes('satisfactory')) 
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-800 dark:text-yellow-400';
+    return 'text-red-600 bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400';
   };
 
   const getScoreColor = (score: number) => {
@@ -84,7 +80,6 @@ const QualityIndex = () => {
       return '#ef4444'; // Red
   };
 
-  // Prepare chart data safely
   const getChartData = () => {
     if (!data || !data.key_metrics) return [];
     return data.key_metrics.map((m: any) => ({
@@ -97,15 +92,15 @@ const QualityIndex = () => {
   const chartData = getChartData();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col min-h-[calc(100vh-64px)]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col min-h-[calc(100vh-64px)] transition-colors">
       
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-slate-900">{t('North East India Environmental Tracker')}</h1>
-        <p className="text-slate-500 mt-2">Comprehensive monitoring for 8 NE States (Arunachal Pradesh, Assam, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura)</p>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{t('North East India Environmental Tracker')}</h1>
+        <p className="text-slate-500 dark:text-slate-400 mt-2">Comprehensive monitoring for 8 NE States (Arunachal Pradesh, Assam, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura)</p>
       </div>
 
-      {/* 1. REPORT SELECTOR (Grid of Buttons) */}
+      {/* 1. REPORT SELECTOR */}
       <div className="mb-8">
         <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 flex items-center gap-2">
             <Activity className="w-4 h-4" /> {t('Select Report Type')}
@@ -120,15 +115,15 @@ const QualityIndex = () => {
                         onClick={() => { setSelectedReport(type); setData(null); }}
                         className={`p-3 rounded-xl border transition-all flex flex-col items-center text-center gap-2 h-full
                             ${isSelected 
-                                ? 'border-indigo-600 bg-indigo-50 ring-2 ring-indigo-200 shadow-md transform scale-105' 
-                                : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow-sm'
+                                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/40 dark:border-indigo-500 ring-2 ring-indigo-200 dark:ring-indigo-800 shadow-md transform scale-105' 
+                                : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-300 dark:hover:border-slate-600 hover:shadow-sm'
                             }
                         `}
                     >
                         <div className={`p-2 rounded-full ${type.color}`}>
                             <Icon className="w-5 h-5" />
                         </div>
-                        <span className={`text-xs font-bold ${isSelected ? 'text-indigo-900' : 'text-slate-600'}`}>
+                        <span className={`text-xs font-bold ${isSelected ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-600 dark:text-slate-400'}`}>
                             {t(type.key)}
                         </span>
                     </button>
@@ -138,16 +133,16 @@ const QualityIndex = () => {
       </div>
 
       {/* 2. INPUT FORM */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-8 transition-colors">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
              
-             {/* State - Restricted to NE */}
+             {/* State */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><MapPin className="w-3 h-3"/> {t('State')}</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-1"><MapPin className="w-3 h-3"/> {t('State')}</label>
                 <select 
                    value={form.state} 
                    onChange={(e) => setForm({ ...form, state: e.target.value, city: '' })}
-                   className="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none"
+                   className="w-full p-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
                 >
                     <option value="">{t('Select State')}</option>
                     {NE_STATES.map(state => (
@@ -158,11 +153,11 @@ const QualityIndex = () => {
 
              {/* City */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase">{t('City / District')}</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">{t('City / District')}</label>
                 <select 
                    value={form.city} 
                    onChange={(e) => setForm({...form, city: e.target.value})}
-                   className="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none"
+                   className="w-full p-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
                    disabled={!form.state}
                 >
                     <option value="">{t('Select City')}</option>
@@ -174,23 +169,23 @@ const QualityIndex = () => {
 
              {/* Date */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Calendar className="w-3 h-3"/> {t('Date')}</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-1"><Calendar className="w-3 h-3"/> {t('Date')}</label>
                 <input 
                    type="date"
                    value={form.date}
                    onChange={(e) => setForm({...form, date: e.target.value})}
-                   className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                   className="w-full p-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
              </div>
 
              {/* Time */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Clock className="w-3 h-3"/> {t('Time (Opt)')}</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-1"><Clock className="w-3 h-3"/> {t('Time (Opt)')}</label>
                 <input 
                    type="time"
                    value={form.time}
                    onChange={(e) => setForm({...form, time: e.target.value})}
-                   className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                   className="w-full p-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
              </div>
 
@@ -217,18 +212,18 @@ const QualityIndex = () => {
           {/* LEFT SIDE: DATA DISPLAY */}
           <div className="space-y-6">
               {!data && !loading && (
-                  <div className="h-full bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center p-8">
-                      <Info className="w-12 h-12 text-slate-300 mb-4" />
-                      <h3 className="text-lg font-bold text-slate-500">No Data Generated</h3>
-                      <p className="text-slate-400 text-sm mt-2">Select a report type and location above to generate an AI analysis.</p>
+                  <div className="h-full bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center p-8 transition-colors">
+                      <Info className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-4" />
+                      <h3 className="text-lg font-bold text-slate-500 dark:text-slate-400">No Data Generated</h3>
+                      <p className="text-slate-400 dark:text-slate-500 text-sm mt-2">Select a report type and location above to generate an AI analysis.</p>
                   </div>
               )}
 
               {loading && (
-                  <div className="h-full bg-white rounded-xl p-6 border border-slate-100 shadow-sm space-y-4 animate-pulse">
-                      <div className="h-8 bg-slate-200 rounded w-3/4"></div>
-                      <div className="h-4 bg-slate-200 rounded w-1/2"></div>
-                      <div className="h-64 bg-slate-200 rounded-xl w-full mt-6"></div>
+                  <div className="h-full bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4 animate-pulse">
+                      <div className="h-8 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+                      <div className="h-64 bg-slate-200 dark:bg-slate-700 rounded-xl w-full mt-6"></div>
                   </div>
               )}
 
@@ -236,34 +231,33 @@ const QualityIndex = () => {
                   <div className="animate-fade-in space-y-6">
                       
                       {/* Title Card */}
-                      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
-                          {/* Simulation Badge for Free Tier */}
+                      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 relative overflow-hidden transition-colors">
+                          {/* Simulation Badge */}
                           {data.is_simulated && (
-                             <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-amber-200 flex items-center gap-1">
+                             <div className="absolute top-0 right-0 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-amber-200 dark:border-amber-800 flex items-center gap-1">
                                 <RefreshCw className="w-3 h-3" /> Simulated Data (Free Tier Limit)
                              </div>
                           )}
                           {!data.is_simulated && (
-                             <div className="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-green-200 flex items-center gap-1">
+                             <div className="absolute top-0 right-0 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-green-200 dark:border-green-800 flex items-center gap-1">
                                 <Zap className="w-3 h-3" /> {t('Live AI Analysis')}
                              </div>
                           )}
 
                           <div className="flex justify-between items-start mt-2">
                               <div>
-                                  <h2 className="text-2xl font-bold text-slate-900">{data.title}</h2>
-                                  <p className="text-sm text-slate-500 mt-1">{t(selectedReport.key)} • {form.city}, {form.state}</p>
+                                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{data.title}</h2>
+                                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{t(selectedReport.key)} • {form.city}, {form.state}</p>
                               </div>
                               <div className={`px-4 py-2 rounded-lg text-sm font-bold border ${getStatusColor(data.overall_status)}`}>
                                   {data.overall_status}
                               </div>
                           </div>
-                          <p className="mt-4 text-slate-700 leading-relaxed">{data.summary}</p>
+                          <p className="mt-4 text-slate-700 dark:text-slate-300 leading-relaxed">{data.summary}</p>
                       </div>
 
-                      {/* --- NEW: AI SAFETY ANALYSIS CARD (Graph Mode) --- */}
-                      <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 flex flex-col sm:flex-row items-center gap-6">
-                          {/* Donut Graph */}
+                      {/* --- AI SAFETY ANALYSIS CARD --- */}
+                      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-indigo-100 dark:border-slate-700 flex flex-col sm:flex-row items-center gap-6 transition-colors">
                           <div className="relative w-32 h-32 flex-shrink-0">
                              <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
@@ -277,147 +271,62 @@ const QualityIndex = () => {
                                       stroke="none"
                                    >
                                       <Cell fill={getScoreColor(data.score)} />
-                                      <Cell fill="#f1f5f9" />
+                                      <Cell fill="#94a3b8" opacity={0.2} />
                                    </Pie>
                                 </PieChart>
                              </ResponsiveContainer>
                              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-2xl font-bold text-slate-800">{data.score}%</span>
+                                <span className="text-2xl font-bold text-slate-800 dark:text-white">{data.score}%</span>
                                 <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Score</span>
                              </div>
                           </div>
 
-                          {/* Verdict & Details */}
                           <div className="flex-1 text-center sm:text-left">
                              <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                                <h3 className="text-lg font-bold text-slate-800">{t('AI Verdict')}</h3>
-                                <span className={`text-lg font-bold ${data.score > 70 ? 'text-green-600' : 'text-red-600'}`}>
+                                <h3 className="text-lg font-bold text-slate-800 dark:text-white">{t('AI Verdict')}</h3>
+                                <span className={`text-lg font-bold ${data.score > 70 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                                     {data.verdict || data.overall_status}
                                 </span>
                              </div>
                              
-                             <p className="text-slate-600 text-sm mb-4 leading-normal">
+                             <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 leading-normal">
                                 Based on current {t(selectedReport.key).toLowerCase()} analysis, the environment is 
-                                <strong className={data.score > 70 ? "text-green-600" : "text-red-600"}> {data.score > 70 ? 'Safe' : 'Unsafe/Critical'}</strong>.
+                                <strong className={data.score > 70 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}> {data.score > 70 ? 'Safe' : 'Unsafe/Critical'}</strong>.
                                 {data.score < 70 
                                     ? " Immediate remediation or filtration is strongly advised before use." 
                                     : " Quality is within acceptable limits for general use."}
                              </p>
-
-                             <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                                {data.score >= 80 ? (
-                                    <span className="px-3 py-1.5 bg-green-100 text-green-800 text-xs font-bold rounded-lg flex items-center gap-1 border border-green-200">
-                                        <CheckCircle2 className="w-3 h-3" /> Safe to Use
-                                    </span>
-                                ) : (
-                                    <span className="px-3 py-1.5 bg-red-100 text-red-800 text-xs font-bold rounded-lg flex items-center gap-1 border border-red-200 animate-pulse">
-                                        <ShieldAlert className="w-3 h-3" /> Action Required
-                                    </span>
-                                )}
-                                <span className="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-medium rounded-lg border border-slate-200">
-                                    AI Confidence: High
-                                </span>
-                             </div>
                           </div>
                       </div>
 
                       {/* Metrics Visualizations */}
-                      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                          <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
+                      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors">
+                          <h3 className="font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
                               <Activity className="w-4 h-4" /> {t('Key Metrics Visualization')}
                           </h3>
                           
                           {/* 1. Text Grid */}
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
                               {data.key_metrics?.map((metric: any, idx: number) => (
-                                  <div key={idx} className="bg-slate-50 p-3 rounded-lg border border-slate-100 hover:border-indigo-200 transition-colors">
-                                      <p className="text-xs font-bold text-slate-500 uppercase truncate" title={metric.name}>{metric.name}</p>
+                                  <div key={idx} className="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 hover:border-indigo-200 transition-colors">
+                                      <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase truncate" title={metric.name}>{metric.name}</p>
                                       <div className="flex items-baseline gap-1 mt-1">
-                                          <span className="text-lg font-bold text-slate-900">{metric.value}</span>
-                                          <span className="text-xs text-slate-400">{metric.unit}</span>
+                                          <span className="text-lg font-bold text-slate-900 dark:text-white">{metric.value}</span>
+                                          <span className="text-xs text-slate-400 dark:text-slate-500">{metric.unit}</span>
                                       </div>
                                   </div>
                               ))}
-                          </div>
-
-                          {/* 2. Charts Grid */}
-                          <div className="grid grid-cols-1 gap-8">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                  
-                                  {/* Bar Chart */}
-                                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                      <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Comparative Values (Bar)</h4>
-                                      <div className="h-48 w-full">
-                                          <ResponsiveContainer width="100%" height="100%">
-                                              <BarChart data={chartData}>
-                                                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                                  <XAxis dataKey="name" tick={{fontSize: 10}} />
-                                                  <YAxis tick={{fontSize: 10}} />
-                                                  <Tooltip />
-                                                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                                                      {chartData.map((entry: any, index: number) => (
-                                                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                      ))}
-                                                  </Bar>
-                                              </BarChart>
-                                          </ResponsiveContainer>
-                                      </div>
-                                  </div>
-
-                                  {/* Pie Chart */}
-                                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                      <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Metric Distribution (Pie)</h4>
-                                      <div className="h-48 w-full">
-                                          <ResponsiveContainer width="100%" height="100%">
-                                              <PieChart>
-                                                  <Pie
-                                                      data={chartData}
-                                                      cx="50%"
-                                                      cy="50%"
-                                                      innerRadius={40}
-                                                      outerRadius={60}
-                                                      paddingAngle={5}
-                                                      dataKey="value"
-                                                  >
-                                                      {chartData.map((entry: any, index: number) => (
-                                                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                      ))}
-                                                  </Pie>
-                                                  <Tooltip />
-                                                  <Legend layout="horizontal" verticalAlign="bottom" align="center" wrapperStyle={{fontSize: '10px'}} />
-                                              </PieChart>
-                                          </ResponsiveContainer>
-                                      </div>
-                                  </div>
-                              </div>
-
-                              {/* Line Chart */}
-                              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                  <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Trend Analysis (Line)</h4>
-                                  <div className="h-48 w-full">
-                                      <ResponsiveContainer width="100%" height="100%">
-                                          <LineChart data={chartData}>
-                                              <CartesianGrid strokeDasharray="3 3" />
-                                              <XAxis dataKey="name" tick={{fontSize: 10}} />
-                                              <YAxis tick={{fontSize: 10}} />
-                                              <Tooltip />
-                                              <Legend />
-                                              <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} activeDot={{ r: 8 }} />
-                                          </LineChart>
-                                      </ResponsiveContainer>
-                                  </div>
-                              </div>
                           </div>
                       </div>
 
                       {/* Alerts & Recommendations */}
                       <div className="grid grid-cols-1 gap-4">
                           {data.alerts && data.alerts.length > 0 && (
-                              <div className="bg-red-50 p-4 rounded-xl border border-red-100">
-                                  <h4 className="font-bold text-red-800 mb-2 flex items-center gap-2">
+                              <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-100 dark:border-red-900/50">
+                                  <h4 className="font-bold text-red-800 dark:text-red-300 mb-2 flex items-center gap-2">
                                       <AlertTriangle className="w-4 h-4" /> {t('Critical Alerts')}
                                   </h4>
-                                  <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
+                                  <ul className="list-disc list-inside text-sm text-red-700 dark:text-red-300 space-y-1">
                                       {data.alerts.map((alert: string, i: number) => (
                                           <li key={i}>{alert}</li>
                                       ))}
@@ -425,11 +334,11 @@ const QualityIndex = () => {
                               </div>
                           )}
                           
-                          <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                              <h4 className="font-bold text-indigo-800 mb-2 flex items-center gap-2">
+                          <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-900/50">
+                              <h4 className="font-bold text-indigo-800 dark:text-indigo-300 mb-2 flex items-center gap-2">
                                   <Info className="w-4 h-4" /> {t('Recommendations')}
                               </h4>
-                              <ul className="list-disc list-inside text-sm text-indigo-700 space-y-1">
+                              <ul className="list-disc list-inside text-sm text-indigo-700 dark:text-indigo-300 space-y-1">
                                   {data.recommendations?.map((rec: string, i: number) => (
                                       <li key={i}>{rec}</li>
                                   ))}
@@ -441,19 +350,14 @@ const QualityIndex = () => {
           </div>
 
           {/* RIGHT SIDE: MAP DISPLAY */}
-          <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden flex flex-col h-[500px] lg:h-auto sticky top-24">
-             <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center shrink-0">
-                 <h3 className="font-bold text-slate-700 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-[500px] lg:h-auto sticky top-24 transition-colors">
+             <div className="bg-slate-50 dark:bg-slate-900 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center shrink-0">
+                 <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-red-500" /> 
                     {t('Location View')}
                  </h3>
-                 {data && data.coordinates && (
-                     <span className="text-xs text-slate-400 font-mono">
-                        {data.coordinates.lat.toFixed(4)}, {data.coordinates.lng.toFixed(4)}
-                     </span>
-                 )}
              </div>
-             <div className="flex-1 relative bg-slate-100">
+             <div className="flex-1 relative bg-slate-100 dark:bg-slate-900">
                  <iframe
                     width="100%"
                     height="100%"
@@ -462,14 +366,8 @@ const QualityIndex = () => {
                     allowFullScreen
                     referrerPolicy="no-referrer-when-downgrade"
                     src={getMapUrl()}
-                    className="absolute inset-0 w-full h-full"
+                    className="absolute inset-0 w-full h-full opacity-90 hover:opacity-100 transition-opacity"
                  ></iframe>
-                 
-                 {/* Overlay Legend if needed */}
-                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur p-2 rounded shadow text-xs text-slate-500 border border-slate-200">
-                    <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500"></span> High Risk</div>
-                    <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500"></span> Safe Zone</div>
-                 </div>
              </div>
           </div>
       </div>

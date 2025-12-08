@@ -62,7 +62,7 @@ const Home = () => {
          <div className="w-full md:w-auto flex-1 flex justify-center md:justify-end order-1 md:order-2">
             <button 
               onClick={() => navigate('/game-selection')}
-              className="group relative px-8 py-4 bg-black rounded-2xl overflow-hidden shadow-2xl transform transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+              className="group relative px-8 py-4 bg-black dark:bg-slate-800 rounded-2xl overflow-hidden shadow-2xl transform transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] border border-slate-800 dark:border-slate-700"
             >
                {/* Animated Background */}
                <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 animate-gradient-xy opacity-80 group-hover:opacity-100 transition-opacity"></div>
@@ -85,33 +85,33 @@ const Home = () => {
 
          {/* Stats Row */}
          <div className="w-full md:w-2/3 order-2 md:order-1 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="p-3 bg-blue-100 text-blue-600 rounded-full">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 transition-colors">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
                 <Users className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-slate-500 font-medium">{t('Total Active Cases')}</p>
-                <p className="text-2xl font-bold text-slate-800">{nationalStats.totalCases.toLocaleString()}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('Total Active Cases')}</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{nationalStats.totalCases.toLocaleString()}</p>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="p-3 bg-red-100 text-red-600 rounded-full">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 transition-colors">
+              <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-slate-500 font-medium">{t('High Risk States')}</p>
-                <p className="text-2xl font-bold text-slate-800">{nationalStats.highRiskStates}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('High Risk States')}</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{nationalStats.highRiskStates}</p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
-              <div className="p-3 bg-teal-100 text-teal-600 rounded-full">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 transition-colors">
+              <div className="p-3 bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-full">
                 <TrendingUp className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm text-slate-500 font-medium">{t('Dominant Disease')}</p>
-                <p className="text-2xl font-bold text-slate-800">
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('Dominant Disease')}</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">
                   {nationalStats.topDisease ? nationalStats.topDisease[0] : 'None'}
                 </p>
               </div>
@@ -123,38 +123,38 @@ const Home = () => {
         {/* Left Column: Map */}
         <div className="lg:col-span-7 space-y-6">
           <div className="relative">
-             <h2 className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur px-4 py-1 rounded-full text-sm font-bold text-slate-700 shadow-sm z-10 border border-slate-200 pointer-events-none">
+             <h2 className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-slate-800/80 backdrop-blur px-4 py-1 rounded-full text-sm font-bold text-slate-700 dark:text-slate-200 shadow-sm z-10 border border-slate-200 dark:border-slate-600 pointer-events-none transition-colors">
                 {t('Nationwide Disease Heatmap')}
              </h2>
              <IndiaMap data={statesData} onStateClick={handleStateClick} />
           </div>
           
           {/* National Aggregates */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h3 className="text-lg font-bold text-slate-800 mb-4">{t('National Distribution')}</h3>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">{t('National Distribution')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <h4 className="text-sm font-medium text-slate-500 mb-2 text-center">{t('By Disease Type')}</h4>
+                    <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 text-center">{t('By Disease Type')}</h4>
                     <DiseasePieChart data={aggregateDiseaseData} />
                 </div>
                 <div>
-                    <h4 className="text-sm font-medium text-slate-500 mb-2 text-center">{t('Caseload Comparison')}</h4>
+                    <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 text-center">{t('Caseload Comparison')}</h4>
                     <DiseaseBarChart data={aggregateDiseaseData} />
                 </div>
             </div>
           </div>
 
           {/* VIDEO SECTION */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 relative mt-12">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 relative mt-12 transition-colors">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 bg-red-100 text-red-600 rounded-lg">
+              <div className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg">
                 <Video className="w-5 h-5" />
               </div>
-              <h3 className="text-lg font-bold text-slate-800">{t('Public Awareness Campaign')}</h3>
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white">{t('Public Awareness Campaign')}</h3>
             </div>
             
             {/* Video Container */}
-            <div className="w-full aspect-[16/9] bg-black rounded-lg overflow-hidden relative shadow-md group">
+            <div className="w-full aspect-[16/9] bg-black rounded-lg overflow-hidden relative shadow-md group border border-slate-200 dark:border-slate-700">
               <iframe 
                 className="absolute top-0 left-0 w-full h-full"
                 src="https://www.youtube.com/embed/dT2Yg5V2AhY?controls=1&playsinline=1&rel=0&disablekb=1&modestbranding=1" 
@@ -164,7 +164,7 @@ const Home = () => {
                 allowFullScreen
               ></iframe>
             </div>
-            <p className="text-sm text-slate-500 mt-3 text-center italic">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 text-center italic">
               Featured content: Disease prevention and hygiene awareness.
             </p>
           </div>
@@ -173,16 +173,16 @@ const Home = () => {
 
         {/* Right Column: List */}
         <div className="lg:col-span-5">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 h-full">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 h-full transition-colors">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-slate-800">{t('State Data')}</h3>
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white">{t('State Data')}</h3>
               <div className="relative w-48">
                 <input
                   type="text"
                   placeholder={t('Search state...')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                 />
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
               </div>
@@ -193,20 +193,20 @@ const Home = () => {
                 <div 
                   key={state.id}
                   onClick={() => handleStateClick(state.id)}
-                  className="flex items-center justify-between p-4 rounded-lg border border-slate-100 hover:bg-slate-50 hover:border-teal-200 cursor-pointer transition-all group"
+                  className="flex items-center justify-between p-4 rounded-lg border border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-teal-200 dark:hover:border-teal-800 cursor-pointer transition-all group"
                 >
                   <div>
-                    <h4 className="font-semibold text-slate-700 group-hover:text-teal-700">{state.name}</h4>
-                    <p className="text-xs text-slate-500">{state.diseases.length} {t('monitored diseases')}</p>
+                    <h4 className="font-semibold text-slate-700 dark:text-slate-200 group-hover:text-teal-700 dark:group-hover:text-teal-400">{state.name}</h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{state.diseases.length} {t('monitored diseases')}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-slate-800">{state.totalAffected}</p>
-                    <p className="text-xs text-slate-500">{t('cases')}</p>
+                    <p className="font-bold text-slate-800 dark:text-white">{state.totalAffected}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{t('cases')}</p>
                   </div>
                 </div>
               ))}
               {filteredStates.length === 0 && (
-                <p className="text-center text-slate-500 py-8">No states found.</p>
+                <p className="text-center text-slate-500 dark:text-slate-400 py-8">No states found.</p>
               )}
             </div>
           </div>

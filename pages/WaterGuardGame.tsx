@@ -25,10 +25,9 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// --- TYPE AUGMENTATION FOR R3F ---
-// Fixes TypeScript errors where R3F elements are not recognized on JSX.IntrinsicElements
-// We augment both global and module-scoped JSX to cover different TS configurations
-declare global {
+// Fix: Add missing types for Three.js elements in JSX
+// Augmenting both 'react' module and global JSX namespace to ensure compatibility
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       group: any;
@@ -46,7 +45,7 @@ declare global {
   }
 }
 
-declare module 'react' {
+declare global {
   namespace JSX {
     interface IntrinsicElements {
       group: any;

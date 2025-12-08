@@ -1,10 +1,9 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { StateData } from "../types";
+import { StateData, WaterQualityReport } from "../types";
 
 export const generateHealthReport = async (stateData: StateData): Promise<string> => {
   if (!process.env.API_KEY) {
-    return "API Key missing. System is running in simulation mode. (Mock Health Summary: Cases are stable, but monitoring is advised in rural sectors.)";
+    return "API Key missing. System is running in simulation mode.\n\nSummary: Current data indicates stable trends across most districts, though seasonal variations in water-borne diseases are observed. Continued monitoring in rural sectors is advised.\n\nRECOMMENDATION: Deploy mobile health units to high-risk blocks immediately and ensure sufficient stock of ORS and Zinc tablets at community health centers.";
   }
 
   try {
@@ -16,11 +15,11 @@ export const generateHealthReport = async (stateData: StateData): Promise<string
       Disease Breakdown: ${stateData.diseases.map(d => `${d.name}: ${d.affected} (${d.trend})`).join(', ')}
 
       Please provide a short, professional health executive summary (approx 100 words).
-      Include:
-      1. Key concern (which disease is spiking).
-      2. One actionable recommendation for public health officials.
-      3. Tone should be serious and informative.
-      Return plain text.
+      Structure the response clearly as follows:
+      1. A brief analysis paragraph summarizing the current situation.
+      2. A distinct line starting exactly with "RECOMMENDATION:" containing one strong, specific actionable step for public health officials.
+
+      Tone should be serious and informative. Return plain text.
     `;
 
     const response = await ai.models.generateContent({
@@ -30,7 +29,7 @@ export const generateHealthReport = async (stateData: StateData): Promise<string
 
     return response.text || "No insights generated.";
   } catch (error: any) {
-    console.error("Gemini API Error:", error);
+    console.warn("Gemini API Error:", error);
     return "Unable to reach AI service (Free Tier limit may be reached). Please try again in a moment.";
   }
 };
@@ -59,6 +58,60 @@ export const suggestPreventiveMeasures = async (diseaseName: string): Promise<st
         return defaults;
     }
 }
+
+// --- JAL AI CHATBOT SERVICE ---
+export const askJalAssistant = async (
+  userQuery: string, 
+  contextData: { states: StateData[], reports: WaterQualityReport[] },
+  languageCode: string
+): Promise<string> => {
+  if (!process.env.API_KEY) {
+    return "I am running in offline mode. I can tell you that the safe pH range is 6.5 to 8.5. For specific data, please configure the API key.";
+  }
+
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+    // Prepare a summarized context to avoid token limits
+    const stateSummary = contextData.states.map(s => 
+      `${s.name}: ${s.totalAffected} cases (Top: ${s.diseases[0]?.name})`
+    ).join('; ');
+    
+    const reportSummary = contextData.reports.slice(-5).map(r => 
+      `Site ${r.siteName} (${r.siteType}): pH ${r.ph}, Turbidity ${r.turbidity} NTU`
+    ).join('; ');
+
+    const prompt = `
+      You are "Jal AI", an intelligent and friendly assistant for the "Jal Suraksha Kavach" platform.
+      
+      User Query: "${userQuery}"
+      Selected Language Code: ${languageCode}
+
+      PRIORITY 1: REAL-TIME DASHBOARD CONTEXT
+      - States Health Overview: ${stateSummary}
+      - Recent Water Quality Reports: ${reportSummary || "No recent specific reports available."}
+
+      INSTRUCTIONS:
+      1. FIRST, check if the User Query is about the dashboard data (states, diseases, water reports). If yes, use the CONTEXT provided above to answer accurately.
+      2. SECOND, if the User Query is GENERAL (e.g., "What is photosynthesis?", "How to purify water at home?", "Write a poem about rain", "Who is the PM of India?"), IGNORE the dashboard context and use your general knowledge to answer helpfully like a smart AI assistant.
+      3. Do NOT say "I don't have data" for general questions. Answer them!
+      4. Keep the answer spoken-friendly (concise, under 60 words if possible, unless a detailed explanation is asked).
+      5. STRICTLY ANSWER IN THE LANGUAGE matching the "Selected Language Code" (e.g., if 'hi-IN', answer in Hindi). If uncertain, answer in English.
+      6. Be polite, encouraging, and helpful.
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+
+    return response.text || "I'm sorry, I couldn't process that.";
+  } catch (error) {
+    console.error("Jal AI Error:", error);
+    return "I am having trouble connecting to the brain right now. Please try again.";
+  }
+};
+
 
 // --- MOCK GENERATOR FOR FREE TIER FALLBACK ---
 const getMockAdvancedReport = (reportType: string, location: {city: string}) => {
@@ -130,7 +183,7 @@ export const getAdvancedReport = async (
     - coordinates: object { lat: number, lng: number } (Approximate coordinates for the city)
   `;
 
-  // Timeout Promise (25 seconds - increased from 10 to allow for slower generation)
+  // Timeout Promise (25 seconds)
   const timeoutPromise = new Promise((_, reject) => 
     setTimeout(() => reject(new Error("Timeout")), 25000)
   );
@@ -183,7 +236,6 @@ export const getAdvancedReport = async (
 
   } catch (error: any) {
     console.warn("Advanced Report: Switching to simulation due to API delay or error:", error.message || error);
-    // 2. Fallback on Error (Rate Limit, Quota, Network, Timeout)
     return getMockAdvancedReport(reportType, location);
   }
 };
