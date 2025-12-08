@@ -60,33 +60,26 @@ export const suggestPreventiveMeasures = async (diseaseName: string): Promise<st
     }
 }
 
-export const getAirQualityAnalysis = async (location: {state: string, city: string, station: string, date: string, time: string}) => {
-  if (!process.env.API_KEY) return null;
-  // Legacy function kept for compatibility, but logic similar to advanced report recommended
-  return null; 
-};
-
-export const getWaterQualityAnalysis = async (location: {state: string, city: string, source: string, date: string}) => {
-  // Legacy function kept for compatibility
-  return null;
-};
-
-export const getGroundWaterAnalysis = async (location: {state: string, district: string, block: string, date: string}) => {
-  // Legacy function kept for compatibility
-  return null;
-};
-
 // --- MOCK GENERATOR FOR FREE TIER FALLBACK ---
 const getMockAdvancedReport = (reportType: string, location: {city: string}) => {
-  const isWater = reportType.toLowerCase().includes('water');
+  const isWater = reportType.toLowerCase().includes('water') || reportType.toLowerCase().includes('groundwater');
   const isDisease = reportType.toLowerCase().includes('disease') || reportType.toLowerCase().includes('hospital');
-  const isMosquito = reportType.toLowerCase().includes('mosquito');
   
+  // Random score logic
+  const score = Math.floor(Math.random() * 40) + 50; // 50-90 range
+  const isSafe = score > 75;
+
+  let verdict = "Analysis Inconclusive";
+  if (isWater) verdict = isSafe ? "Safe for Consumption" : "Requires Filtration";
+  else if (isDisease) verdict = isSafe ? "Low Health Risk" : "Elevated Viral Risk";
+  else verdict = isSafe ? "Stable Conditions" : "Caution Advised";
+
   return {
     title: `${reportType} - Simulated Analysis`,
-    overall_status: isWater ? "Moderate Risk" : isDisease ? "Elevated" : "Safe",
-    score: Math.floor(Math.random() * 40) + 60,
-    summary: `This is a simulated report for ${location.city} because the AI service is currently unreachable (likely Free Tier rate limit). Data suggests ${isWater ? 'elevated turbidity levels following recent rainfall' : isDisease ? 'a slight uptick in seasonal viral cases' : 'nominal environmental parameters'}. Local authorities are advised to monitor the situation.`,
+    overall_status: isSafe ? "Safe" : "Caution",
+    score: score,
+    verdict: verdict,
+    summary: `This is a simulated report for ${location.city} because the AI service is currently unreachable (likely Free Tier rate limit). Data suggests ${isWater ? (isSafe ? 'water parameters are within acceptable limits.' : 'turbidity levels are slightly high, boiling advised.') : isDisease ? 'seasonal variations in local health data.' : 'nominal environmental parameters.'}`,
     key_metrics: [
       { name: isWater ? "pH Level" : isDisease ? "Daily OPD" : "Larval Density", value: isWater ? "7.4" : isDisease ? "145" : "12", unit: isWater ? "" : isDisease ? "patients" : "per dip", status: "Neutral" },
       { name: isWater ? "Turbidity" : isDisease ? "Viral Fever" : "Fogging Coverage", value: isWater ? "12" : isDisease ? "45" : "85", unit: isWater ? "NTU" : isDisease ? "cases" : "%", status: isWater ? "Bad" : "Neutral" },
@@ -116,18 +109,19 @@ export const getAdvancedReport = async (
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const prompt = `
-    Generate a simulated, realistic public health/environmental report.
+    Generate a realistic public health/environmental report analysis.
     
     Report Type: ${reportType}
     Location: ${location.city}, ${location.state}, North East India
     Date: ${location.date} ${location.time ? 'at ' + location.time : ''}
 
-    Context: This is for a dashboard tracking health and environment in NE India.
+    Context: Dashboard for tracking health and environment in NE India.
     
     Return a JSON object with the following structure:
     - title: string (e.g., "High Turbidity Alert")
     - overall_status: string (e.g., "Critical", "Safe", "Moderate")
-    - score: number (0-100 scale representation of the metric, if applicable)
+    - score: number (0-100 percentage. Higher is better/safer. e.g. 90 = Very Safe, 30 = Hazardous)
+    - verdict: string (Short 3-5 word final judgment. e.g. "Safe to Drink" or "Filter Before Use" or "High Disease Risk")
     - summary: string (2 sentences explaining the situation)
     - key_metrics: array of objects { name: string, value: string/number, unit: string, status: "Good" | "Bad" | "Neutral" }
       (Provide 4-5 relevant metrics for the ${reportType}. E.g. for Mosquito: Larval Density, Fogging Status. For Hospital: OPD Footfall, Major Complaints.)
@@ -136,8 +130,13 @@ export const getAdvancedReport = async (
     - coordinates: object { lat: number, lng: number } (Approximate coordinates for the city)
   `;
 
+  // Timeout Promise (25 seconds - increased from 10 to allow for slower generation)
+  const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error("Timeout")), 25000)
+  );
+
   try {
-    const response = await ai.models.generateContent({
+    const apiCall = ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
@@ -148,6 +147,7 @@ export const getAdvancedReport = async (
             title: { type: Type.STRING },
             overall_status: { type: Type.STRING },
             score: { type: Type.NUMBER },
+            verdict: { type: Type.STRING },
             summary: { type: Type.STRING },
             key_metrics: {
               type: Type.ARRAY,
@@ -175,12 +175,15 @@ export const getAdvancedReport = async (
       }
     });
 
+    // Race between API and Timeout
+    const response: any = await Promise.race([apiCall, timeoutPromise]);
+
     const result = JSON.parse(response.text || "{}");
     return { ...result, is_simulated: false };
 
   } catch (error: any) {
-    console.error("Advanced Report Error (likely API limit):", error);
-    // 2. Fallback on Error (Rate Limit, Quota, Network)
+    console.warn("Advanced Report: Switching to simulation due to API delay or error:", error.message || error);
+    // 2. Fallback on Error (Rate Limit, Quota, Network, Timeout)
     return getMockAdvancedReport(reportType, location);
   }
 };

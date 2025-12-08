@@ -25,6 +25,45 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// --- TYPE AUGMENTATION FOR R3F ---
+// Fixes TypeScript errors where R3F elements are not recognized on JSX.IntrinsicElements
+// We augment both global and module-scoped JSX to cover different TS configurations
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      group: any;
+      mesh: any;
+      meshStandardMaterial: any;
+      meshPhysicalMaterial: any;
+      meshBasicMaterial: any;
+      pointLight: any;
+      ambientLight: any;
+      planeGeometry: any;
+      cylinderGeometry: any;
+      ringGeometry: any;
+      gridHelper: any;
+    }
+  }
+}
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      group: any;
+      mesh: any;
+      meshStandardMaterial: any;
+      meshPhysicalMaterial: any;
+      meshBasicMaterial: any;
+      pointLight: any;
+      ambientLight: any;
+      planeGeometry: any;
+      cylinderGeometry: any;
+      ringGeometry: any;
+      gridHelper: any;
+    }
+  }
+}
+
 // --- 1. GAME LOGIC & CONSTANTS ---
 
 type ParamKey = 'pH' | 'Temp' | 'Turbidity' | 'DO' | 'TDS' | 'Hardness' | 'EC' | 'Chemicals' | 'Chlorine' | 'Bio';
@@ -347,7 +386,7 @@ const NatureElement = ({ type, position }: { type: string, position: [number, nu
   );
 };
 
-const Monster3D = ({ data, onClick }: { data: GameMonster, onClick: () => void }) => {
+const Monster3D: React.FC<{ data: GameMonster; onClick: () => void }> = ({ data, onClick }) => {
   const config = MONSTER_CONFIG[data.type][data.severity];
   const natureType = MONSTER_CONFIG[data.type].natureType;
   const meshRef = useRef<THREE.Group>(null);
@@ -407,7 +446,7 @@ const Monster3D = ({ data, onClick }: { data: GameMonster, onClick: () => void }
         {/* Health Bar / Info */}
         <Html position={[0, 1.8, 0]} center>
           <div className={`px-3 py-1.5 rounded-lg text-white text-xs font-bold whitespace-nowrap backdrop-blur-md border border-white/20 shadow-lg flex flex-col items-center cursor-pointer transition-all hover:scale-110
-            ${data.severity === 'extreme' ? 'bg-red-900/90 animate-pulse border-red-500' : 'bg-slate-900/80'}
+            ${data.severity === 'extreme' ? 'bg-red-900/90 animate-pulse' : 'bg-slate-900/80'}
           `}>
             <div className="flex items-center gap-1">
                {data.severity === 'extreme' && <Skull className="w-3 h-3 text-red-200" />}

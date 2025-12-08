@@ -1,31 +1,33 @@
 
 import React, { useState } from 'react';
-import { Droplets, CloudRain, Waves, Activity, Building2, Pipette, Bug, FileWarning, Stethoscope, MapPin, Calendar, Clock, Search, ArrowRight, Info, AlertTriangle, Zap, RefreshCw } from 'lucide-react';
+import { Droplets, CloudRain, Waves, Activity, Building2, Pipette, Bug, FileWarning, Stethoscope, MapPin, Calendar, Clock, Search, ArrowRight, Info, AlertTriangle, Zap, RefreshCw, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { INDIAN_CITIES_MAP, NE_STATES } from '../constants';
 import { getAdvancedReport } from '../services/geminiService';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
   LineChart, Line, PieChart, Pie, Legend
 } from 'recharts';
 
-const REPORT_TYPES = [
-  { id: 'water_quality', name: 'Water Quality Report', icon: Droplets, color: 'bg-blue-100 text-blue-600' },
-  { id: 'bacterial_test', name: 'Bacterial Test Results', icon: Pipette, color: 'bg-purple-100 text-purple-600' },
-  { id: 'turbidity_ph', name: 'Turbidity & pH Levels', icon: Waves, color: 'bg-teal-100 text-teal-600' },
-  { id: 'rainfall_flood', name: 'Rainfall & Flood Alerts', icon: CloudRain, color: 'bg-sky-100 text-sky-600' },
-  { id: 'groundwater', name: 'Groundwater Status', icon: ArrowRight, color: 'bg-amber-100 text-amber-600' }, 
-  { id: 'disease_cases', name: 'Daily Disease Cases', icon: Activity, color: 'bg-red-100 text-red-600' },
-  { id: 'hospital_opd', name: 'Hospital OPD Summary', icon: Stethoscope, color: 'bg-pink-100 text-pink-600' },
-  { id: 'pipeline_leakage', name: 'Pipeline Leakage Reports', icon: FileWarning, color: 'bg-orange-100 text-orange-600' },
-  { id: 'wastewater', name: 'Wastewater Overflow Alerts', icon: Waves, color: 'bg-stone-100 text-stone-600' },
-  { id: 'mosquito', name: 'Mosquito Breeding Spots', icon: Bug, color: 'bg-green-100 text-green-600' },
+const REPORT_KEYS = [
+  { id: 'water_quality', key: 'Water Quality Report', icon: Droplets, color: 'bg-blue-100 text-blue-600' },
+  { id: 'bacterial_test', key: 'Bacterial Test Results', icon: Pipette, color: 'bg-purple-100 text-purple-600' },
+  { id: 'turbidity_ph', key: 'Turbidity & pH Levels', icon: Waves, color: 'bg-teal-100 text-teal-600' },
+  { id: 'rainfall_flood', key: 'Rainfall & Flood Alerts', icon: CloudRain, color: 'bg-sky-100 text-sky-600' },
+  { id: 'groundwater', key: 'Groundwater Status', icon: ArrowRight, color: 'bg-amber-100 text-amber-600' }, 
+  { id: 'disease_cases', key: 'Daily Disease Cases', icon: Activity, color: 'bg-red-100 text-red-600' },
+  { id: 'hospital_opd', key: 'Hospital OPD Summary', icon: Stethoscope, color: 'bg-pink-100 text-pink-600' },
+  { id: 'pipeline_leakage', key: 'Pipeline Leakage Reports', icon: FileWarning, color: 'bg-orange-100 text-orange-600' },
+  { id: 'wastewater', key: 'Wastewater Overflow Alerts', icon: Waves, color: 'bg-stone-100 text-stone-600' },
+  { id: 'mosquito', key: 'Mosquito Breeding Spots', icon: Bug, color: 'bg-green-100 text-green-600' },
 ];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 const QualityIndex = () => {
+  const { t } = useLanguage();
   // State for selected report type
-  const [selectedReport, setSelectedReport] = useState(REPORT_TYPES[0]);
+  const [selectedReport, setSelectedReport] = useState(REPORT_KEYS[0]);
 
   // Form State
   const [form, setForm] = useState({
@@ -47,7 +49,8 @@ const QualityIndex = () => {
     setLoading(true);
     setData(null);
 
-    const result = await getAdvancedReport(selectedReport.name, {
+    // We send the English name to the AI for consistency, even if displayed in other language
+    const result = await getAdvancedReport(selectedReport.key, {
       state: form.state,
       city: form.city,
       date: form.date,
@@ -75,6 +78,12 @@ const QualityIndex = () => {
     return 'text-red-600 bg-red-50 border-red-200';
   };
 
+  const getScoreColor = (score: number) => {
+      if (score >= 80) return '#22c55e'; // Green
+      if (score >= 50) return '#eab308'; // Yellow
+      return '#ef4444'; // Red
+  };
+
   // Prepare chart data safely
   const getChartData = () => {
     if (!data || !data.key_metrics) return [];
@@ -92,17 +101,17 @@ const QualityIndex = () => {
       
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-slate-900">North East India Environmental Tracker</h1>
+        <h1 className="text-3xl font-bold text-slate-900">{t('North East India Environmental Tracker')}</h1>
         <p className="text-slate-500 mt-2">Comprehensive monitoring for 8 NE States (Arunachal Pradesh, Assam, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura)</p>
       </div>
 
       {/* 1. REPORT SELECTOR (Grid of Buttons) */}
       <div className="mb-8">
         <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 flex items-center gap-2">
-            <Activity className="w-4 h-4" /> Select Report Type
+            <Activity className="w-4 h-4" /> {t('Select Report Type')}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {REPORT_TYPES.map((type) => {
+            {REPORT_KEYS.map((type) => {
                 const Icon = type.icon;
                 const isSelected = selectedReport.id === type.id;
                 return (
@@ -120,7 +129,7 @@ const QualityIndex = () => {
                             <Icon className="w-5 h-5" />
                         </div>
                         <span className={`text-xs font-bold ${isSelected ? 'text-indigo-900' : 'text-slate-600'}`}>
-                            {type.name}
+                            {t(type.key)}
                         </span>
                     </button>
                 );
@@ -134,13 +143,13 @@ const QualityIndex = () => {
              
              {/* State - Restricted to NE */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><MapPin className="w-3 h-3"/> State</label>
+                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><MapPin className="w-3 h-3"/> {t('State')}</label>
                 <select 
                    value={form.state} 
                    onChange={(e) => setForm({ ...form, state: e.target.value, city: '' })}
                    className="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none"
                 >
-                    <option value="">Select State</option>
+                    <option value="">{t('Select State')}</option>
                     {NE_STATES.map(state => (
                         <option key={state} value={state}>{state}</option>
                     ))}
@@ -149,14 +158,14 @@ const QualityIndex = () => {
 
              {/* City */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase">City / District</label>
+                <label className="text-xs font-bold text-slate-500 uppercase">{t('City / District')}</label>
                 <select 
                    value={form.city} 
                    onChange={(e) => setForm({...form, city: e.target.value})}
                    className="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none"
                    disabled={!form.state}
                 >
-                    <option value="">Select City</option>
+                    <option value="">{t('Select City')}</option>
                     {form.state && INDIAN_CITIES_MAP[form.state]?.map(city => (
                         <option key={city} value={city}>{city}</option>
                     ))}
@@ -165,7 +174,7 @@ const QualityIndex = () => {
 
              {/* Date */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Calendar className="w-3 h-3"/> Date</label>
+                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Calendar className="w-3 h-3"/> {t('Date')}</label>
                 <input 
                    type="date"
                    value={form.date}
@@ -176,7 +185,7 @@ const QualityIndex = () => {
 
              {/* Time */}
              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Clock className="w-3 h-3"/> Time (Opt)</label>
+                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Clock className="w-3 h-3"/> {t('Time (Opt)')}</label>
                 <input 
                    type="time"
                    value={form.time}
@@ -195,7 +204,7 @@ const QualityIndex = () => {
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                     <>
-                       <Search className="w-4 h-4" /> Analyze
+                       <Search className="w-4 h-4" /> {t('Analyze')}
                     </>
                 )}
              </button>
@@ -236,14 +245,14 @@ const QualityIndex = () => {
                           )}
                           {!data.is_simulated && (
                              <div className="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-green-200 flex items-center gap-1">
-                                <Zap className="w-3 h-3" /> Live AI Analysis
+                                <Zap className="w-3 h-3" /> {t('Live AI Analysis')}
                              </div>
                           )}
 
                           <div className="flex justify-between items-start mt-2">
                               <div>
                                   <h2 className="text-2xl font-bold text-slate-900">{data.title}</h2>
-                                  <p className="text-sm text-slate-500 mt-1">{selectedReport.name} • {form.city}, {form.state}</p>
+                                  <p className="text-sm text-slate-500 mt-1">{t(selectedReport.key)} • {form.city}, {form.state}</p>
                               </div>
                               <div className={`px-4 py-2 rounded-lg text-sm font-bold border ${getStatusColor(data.overall_status)}`}>
                                   {data.overall_status}
@@ -252,10 +261,70 @@ const QualityIndex = () => {
                           <p className="mt-4 text-slate-700 leading-relaxed">{data.summary}</p>
                       </div>
 
+                      {/* --- NEW: AI SAFETY ANALYSIS CARD (Graph Mode) --- */}
+                      <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 flex flex-col sm:flex-row items-center gap-6">
+                          {/* Donut Graph */}
+                          <div className="relative w-32 h-32 flex-shrink-0">
+                             <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                   <Pie
+                                      data={[{value: data.score}, {value: 100 - data.score}]}
+                                      dataKey="value"
+                                      innerRadius={40}
+                                      outerRadius={55}
+                                      startAngle={90}
+                                      endAngle={-270}
+                                      stroke="none"
+                                   >
+                                      <Cell fill={getScoreColor(data.score)} />
+                                      <Cell fill="#f1f5f9" />
+                                   </Pie>
+                                </PieChart>
+                             </ResponsiveContainer>
+                             <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-2xl font-bold text-slate-800">{data.score}%</span>
+                                <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Score</span>
+                             </div>
+                          </div>
+
+                          {/* Verdict & Details */}
+                          <div className="flex-1 text-center sm:text-left">
+                             <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                                <h3 className="text-lg font-bold text-slate-800">{t('AI Verdict')}</h3>
+                                <span className={`text-lg font-bold ${data.score > 70 ? 'text-green-600' : 'text-red-600'}`}>
+                                    {data.verdict || data.overall_status}
+                                </span>
+                             </div>
+                             
+                             <p className="text-slate-600 text-sm mb-4 leading-normal">
+                                Based on current {t(selectedReport.key).toLowerCase()} analysis, the environment is 
+                                <strong className={data.score > 70 ? "text-green-600" : "text-red-600"}> {data.score > 70 ? 'Safe' : 'Unsafe/Critical'}</strong>.
+                                {data.score < 70 
+                                    ? " Immediate remediation or filtration is strongly advised before use." 
+                                    : " Quality is within acceptable limits for general use."}
+                             </p>
+
+                             <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                                {data.score >= 80 ? (
+                                    <span className="px-3 py-1.5 bg-green-100 text-green-800 text-xs font-bold rounded-lg flex items-center gap-1 border border-green-200">
+                                        <CheckCircle2 className="w-3 h-3" /> Safe to Use
+                                    </span>
+                                ) : (
+                                    <span className="px-3 py-1.5 bg-red-100 text-red-800 text-xs font-bold rounded-lg flex items-center gap-1 border border-red-200 animate-pulse">
+                                        <ShieldAlert className="w-3 h-3" /> Action Required
+                                    </span>
+                                )}
+                                <span className="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-medium rounded-lg border border-slate-200">
+                                    AI Confidence: High
+                                </span>
+                             </div>
+                          </div>
+                      </div>
+
                       {/* Metrics Visualizations */}
                       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                           <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
-                              <Activity className="w-4 h-4" /> Key Metrics Visualization
+                              <Activity className="w-4 h-4" /> {t('Key Metrics Visualization')}
                           </h3>
                           
                           {/* 1. Text Grid */}
@@ -346,7 +415,7 @@ const QualityIndex = () => {
                           {data.alerts && data.alerts.length > 0 && (
                               <div className="bg-red-50 p-4 rounded-xl border border-red-100">
                                   <h4 className="font-bold text-red-800 mb-2 flex items-center gap-2">
-                                      <AlertTriangle className="w-4 h-4" /> Critical Alerts
+                                      <AlertTriangle className="w-4 h-4" /> {t('Critical Alerts')}
                                   </h4>
                                   <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
                                       {data.alerts.map((alert: string, i: number) => (
@@ -358,7 +427,7 @@ const QualityIndex = () => {
                           
                           <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                               <h4 className="font-bold text-indigo-800 mb-2 flex items-center gap-2">
-                                  <Info className="w-4 h-4" /> Recommendations
+                                  <Info className="w-4 h-4" /> {t('Recommendations')}
                               </h4>
                               <ul className="list-disc list-inside text-sm text-indigo-700 space-y-1">
                                   {data.recommendations?.map((rec: string, i: number) => (
@@ -376,7 +445,7 @@ const QualityIndex = () => {
              <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center shrink-0">
                  <h3 className="font-bold text-slate-700 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-red-500" /> 
-                    Location View
+                    {t('Location View')}
                  </h3>
                  {data && data.coordinates && (
                      <span className="text-xs text-slate-400 font-mono">
