@@ -22,58 +22,58 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-100 max-w-md w-full">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center px-4 bg-gradient-to-b from-[#003366] to-[#009688] font-['Poppins',sans-serif]">
+      <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full animate-fade-in">
         <div className="text-center mb-8">
-          <div className="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ShieldCheck className="w-8 h-8 text-teal-600" />
+          <div className="bg-[#E0F2F1] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#B2DFDB]">
+            <ShieldCheck className="w-8 h-8 text-[#009688]" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900">State Admin Portal</h2>
-          <p className="text-slate-500 text-sm mt-2">Secure access for government officials</p>
+          <h2 className="text-[28px] font-bold text-[#003366] mb-2 tracking-tight">State Admin Portal</h2>
+          <p className="text-slate-500 text-sm">Secure access for government officials</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">State Name</label>
+            <label className="block text-[14px] font-medium text-[#111827] mb-2">State Name</label>
             <input
               type="text"
               value={stateName}
               onChange={(e) => setStateName(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#009688] rounded-lg text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-transparent placeholder-slate-400 bg-white"
               placeholder="e.g. Maharashtra"
               required
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+            <label className="block text-[14px] font-medium text-[#111827] mb-2">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#009688] rounded-lg text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-transparent placeholder-slate-400 bg-white"
               placeholder="••••••••"
               required
             />
           </div>
 
           {error && (
-            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg">
+            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 font-medium">
               {error}
             </div>
           )}
 
           <button
             type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2.5 rounded-lg transition-colors"
+            className="w-full bg-[#009688] hover:bg-[#00796B] text-white font-medium py-3.5 rounded-lg transition-colors shadow-md text-[15px]"
           >
             Secure Login
           </button>
         </form>
-        
-        <div className="mt-6 text-center text-xs text-slate-400">
-            <p>For demo access, use any state name (e.g., "Odisha") and password "admin".</p>
-        </div>
+      </div>
+      
+      <div className="mt-8 text-center text-[#ECEFF1] text-sm max-w-md opacity-90">
+          <p>For demo access, use any state name (e.g., "Odisha") and password "admin".</p>
       </div>
     </div>
   );

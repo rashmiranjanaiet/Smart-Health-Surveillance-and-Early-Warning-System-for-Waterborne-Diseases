@@ -11,12 +11,28 @@ type Message = {
   timestamp: Date;
 };
 
+// Expanded Language Support with Best Available Fallbacks for Voice
 const LANGUAGES = [
   { code: 'en-US', label: 'English', voiceName: 'Google US English' },
   { code: 'hi-IN', label: 'Hindi', voiceName: 'Google हिन्दी' },
+  { code: 'as-IN', label: 'Assamese', voiceName: 'Google हिन्दी' },
   { code: 'bn-IN', label: 'Bengali', voiceName: 'Google Bangla' },
-  { code: 'as-IN', label: 'Assamese', voiceName: 'Google हिन्दी' }, // Fallback
-  { code: 'mni-IN', label: 'Meitei', voiceName: 'Google हिन्दी' }   // Fallback
+  { code: 'brx-IN', label: 'Bodo', voiceName: 'Google हिन्दी' },
+  { code: 'mni-IN', label: 'Meitei', voiceName: 'Google हिन्दी' },
+  { code: 'lus-IN', label: 'Mizo', voiceName: 'Google US English' },
+  { code: 'kha-IN', label: 'Khasi', voiceName: 'Google US English' },
+  { code: 'grt-IN', label: 'Garo', voiceName: 'Google US English' },
+  { code: 'nag-IN', label: 'Nagamese', voiceName: 'Google हिन्दी' },
+  { code: 'njo-IN', label: 'Ao Naga', voiceName: 'Google US English' },
+  { code: 'nsm-IN', label: 'Sumi', voiceName: 'Google US English' },
+  { code: 'njh-IN', label: 'Lotha', voiceName: 'Google US English' },
+  { code: 'nmf-IN', label: 'Tangkhul', voiceName: 'Google US English' },
+  { code: 'trp-IN', label: 'Kokborok', voiceName: 'Google Bangla' },
+  { code: 'mjw-IN', label: 'Karbi', voiceName: 'Google US English' },
+  { code: 'mrg-IN', label: 'Mishing', voiceName: 'Google US English' },
+  { code: 'dis-IN', label: 'Dimasa', voiceName: 'Google Bangla' },
+  { code: 'twm-IN', label: 'Monpa', voiceName: 'Google US English' },
+  { code: 'adi-IN', label: 'Adi', voiceName: 'Google US English' }
 ];
 
 export const JalAI: React.FC = () => {

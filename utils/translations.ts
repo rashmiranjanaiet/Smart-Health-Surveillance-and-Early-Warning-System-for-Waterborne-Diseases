@@ -1,15 +1,39 @@
 
-export type Language = 'en' | 'hi' | 'as' | 'bn' | 'mni';
+export type Language = 
+  | 'en' | 'hi' | 'as' | 'bn' | 'brx' | 'mni' 
+  | 'lus' | 'kha' | 'grt' | 'nag' | 'njo' 
+  | 'nsm' | 'njh' | 'nmf' | 'trp' | 'mjw' 
+  | 'mrg' | 'dis' | 'twm' | 'adi';
 
 export const LANGUAGES: { code: Language; name: string; nativeName: string }[] = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
   { code: 'as', name: 'Assamese', nativeName: 'অসমীয়া' },
   { code: 'bn', name: 'Bengali', nativeName: 'বাংলা' },
-  { code: 'mni', name: 'Meitei', nativeName: 'ꯃꯩꯇꯩꯂꯣꯟ' },
+  { code: 'brx', name: 'Bodo', nativeName: 'बर\'' },
+  { code: 'mni', name: 'Meitei (Manipuri)', nativeName: 'ꯃꯩꯇꯩꯂꯣꯟ' },
+  { code: 'lus', name: 'Mizo', nativeName: 'Mizo ṭawng' },
+  { code: 'kha', name: 'Khasi', nativeName: 'Ka Ktien Khasi' },
+  { code: 'grt', name: 'Garo', nativeName: 'A·chik' },
+  { code: 'nag', name: 'Nagamese', nativeName: 'Nagamese' },
+  { code: 'njo', name: 'Ao Naga', nativeName: 'Ao' },
+  { code: 'nsm', name: 'Sumi (Sema)', nativeName: 'Sümi' },
+  { code: 'njh', name: 'Lotha', nativeName: 'Lotha' },
+  { code: 'nmf', name: 'Tangkhul', nativeName: 'Tangkhul' },
+  { code: 'trp', name: 'Kokborok', nativeName: 'Kokborok' },
+  { code: 'mjw', name: 'Karbi', nativeName: 'Karbi' },
+  { code: 'mrg', name: 'Mishing', nativeName: 'Mising' },
+  { code: 'dis', name: 'Dimasa', nativeName: 'Dimasa' },
+  { code: 'twm', name: 'Monpa', nativeName: 'Monpa' },
+  { code: 'adi', name: 'Adi', nativeName: 'Adi' },
 ];
 
-export const TRANSLATIONS: Record<string, Record<Language, string>> = {
+// Helper to safely get translation or fallback
+const getTrans = (set: any, lang: Language) => {
+  return set[lang] || set['en'];
+};
+
+export const TRANSLATIONS: Record<string, Record<string, string>> = {
   // Navigation
   "Dashboard": {
     en: "Dashboard",

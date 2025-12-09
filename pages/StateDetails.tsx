@@ -477,39 +477,41 @@ const StateDetails = () => {
            </div>
 
            {/* Data Table */}
-           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
-               <div className="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700">
+           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+               <div className="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700 rounded-t-xl">
                    <h3 className="font-semibold text-slate-800 dark:text-white">Detailed Records</h3>
                </div>
-               <table className="w-full text-sm text-left">
-                   <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-800">
-                       <tr>
-                           <th className="px-6 py-3">Disease</th>
-                           <th className="px-6 py-3 text-right">Affected</th>
-                           <th className="px-6 py-3 text-right">Trend</th>
-                       </tr>
-                   </thead>
-                   <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                       {displayedDiseases.map(d => (
-                           <tr key={d.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                               <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{d.name}</td>
-                               <td className="px-6 py-4 text-right text-slate-700 dark:text-slate-300">{d.affected}</td>
-                               <td className="px-6 py-4 text-right">
-                                   <span className={`px-2 py-1 rounded text-xs ${d.trend === 'up' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
-                                       {d.trend}
-                                   </span>
-                               </td>
-                           </tr>
-                       ))}
-                       {displayedDiseases.length === 0 && (
+               <div className="overflow-x-auto">
+                   <table className="w-full text-sm text-left">
+                       <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-800">
                            <tr>
-                               <td colSpan={3} className="px-6 py-8 text-center text-slate-400 dark:text-slate-500">
-                                   No records found for this selection.
-                               </td>
+                               <th className="px-6 py-3">Disease</th>
+                               <th className="px-6 py-3 text-right">Affected</th>
+                               <th className="px-6 py-3 text-right">Trend</th>
                            </tr>
-                       )}
-                   </tbody>
-               </table>
+                       </thead>
+                       <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                           {displayedDiseases.map(d => (
+                               <tr key={d.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                                   <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{d.name}</td>
+                                   <td className="px-6 py-4 text-right text-slate-700 dark:text-slate-300">{d.affected}</td>
+                                   <td className="px-6 py-4 text-right">
+                                       <span className={`px-2 py-1 rounded text-xs ${d.trend === 'up' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
+                                           {d.trend}
+                                       </span>
+                                   </td>
+                               </tr>
+                           ))}
+                           {displayedDiseases.length === 0 && (
+                               <tr>
+                                   <td colSpan={3} className="px-6 py-8 text-center text-slate-400 dark:text-slate-500">
+                                       No records found for this selection.
+                                   </td>
+                               </tr>
+                           )}
+                       </tbody>
+                   </table>
+               </div>
            </div>
         </div>
       </div>
