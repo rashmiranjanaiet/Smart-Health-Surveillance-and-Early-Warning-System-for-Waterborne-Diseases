@@ -25,6 +25,13 @@ export const TRANSLATIONS: Record<string, Record<Language, string>> = {
     bn: "গুণমান সূচক",
     mni: "ꯀ꯭ꯋꯥꯂꯤꯇꯤ ꯏꯟꯗꯦꯛꯁ"
   },
+  "Live Sensors": {
+    en: "Live Sensors",
+    hi: "लाइव सेंसर",
+    as: "লাইভ চেন্সৰ",
+    bn: "লাইভ সেন্সর",
+    mni: "ꯂꯥꯏꯚ ꯁꯦꯟꯁꯔ"
+  },
   "WaterGuard Hero": {
     en: "WaterGuard Hero",
     hi: "वाटरगार्ड हीरो",

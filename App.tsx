@@ -12,8 +12,9 @@ import AdminPanel from './pages/AdminPanel';
 import QualityIndex from './pages/QualityIndex';
 import WaterGuardGame from './pages/WaterGuardGame';
 import GameSelection from './pages/GameSelection';
+import LiveMonitoring from './pages/LiveMonitoring';
 import { JalAI } from './components/JalAI';
-import { Activity, Shield, Wind, Gamepad2, Globe, ChevronDown, Sun, Moon } from 'lucide-react';
+import { Activity, Shield, Wind, Gamepad2, Globe, ChevronDown, Sun, Moon, Radio } from 'lucide-react';
 
 const Navigation = () => {
   const { user, logout } = useApp();
@@ -54,6 +55,14 @@ const Navigation = () => {
              >
                <Wind className="w-4 h-4" />
                {t('Quality Index')}
+             </Link>
+
+             <Link 
+               to="/live-monitoring" 
+               className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/live-monitoring' ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+             >
+               <Radio className="w-4 h-4 text-red-400 animate-pulse" />
+               {t('Live Sensors')}
              </Link>
 
              <Link 
@@ -163,6 +172,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/quality-index" element={<QualityIndex />} />
+                  <Route path="/live-monitoring" element={<LiveMonitoring />} />
                   <Route path="/game" element={<WaterGuardGame />} />
                   <Route path="/game-selection" element={<GameSelection />} />
                   <Route path="/state/:stateId" element={<StateDetails />} />

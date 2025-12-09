@@ -105,7 +105,13 @@ const GameSelection = () => {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {STATE_GAMES.map((game) => (
+          {STATE_GAMES.map((game) => {
+            // SPECIFIC LOGIC: Arunachal Pradesh gets the new Runner Game URL
+            const gameUrl = game.id === 'AR' 
+                ? 'https://jal-suraksha-kavach-runner-584828094434.us-west1.run.app/'
+                : 'https://infinite-heroes-584828094434.us-west1.run.app/';
+
+            return (
             <div key={game.id} className="group relative h-[400px] w-full perspective-1000 cursor-pointer">
               {/* Card Container */}
               <div className="relative w-full h-full rounded-2xl transition-all duration-500 transform group-hover:scale-105 group-hover:-translate-y-2 shadow-2xl">
@@ -114,7 +120,10 @@ const GameSelection = () => {
                 <div className="absolute inset-0 rounded-2xl overflow-hidden">
                   <img 
                     src={game.image} 
-                    alt={game.name} 
+                    alt={game.name}
+                    onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${game.id}/400/600`
+                    }}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   {/* Gradient Overlay */}
@@ -138,14 +147,16 @@ const GameSelection = () => {
                     {game.title}
                   </h3>
 
-                  {/* Play Button */}
-                  <Link 
-                    to="/game" // Currently links to the main game engine as a demo
+                  {/* Play Button - Dynamic Link based on State */}
+                  <a 
+                    href={gameUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
                     className="w-full bg-white/10 hover:bg-white text-white hover:text-black backdrop-blur-md border border-white/30 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"
                   >
                     <Play className="w-5 h-5 fill-current" />
                     PLAY NOW
-                  </Link>
+                  </a>
                 </div>
 
                 {/* Floating Elements */}
@@ -155,7 +166,8 @@ const GameSelection = () => {
 
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
       </div>
     </div>
